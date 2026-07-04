@@ -1,0 +1,27 @@
+{
+  "name": "code-hint",
+  "version": "1.0.0",
+  "description": "A badly written code assistant",
+  "type": "module",
+  "main": "dist/api/index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev:api": "tsx watch api/index.ts",
+    "dev:cli": "tsx cli/index.ts",
+    "run:script": "tsx scripts/run.ts",
+    "start:api": "node dist/api/index.js",
+    "lint": "eslint ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {},
+  "devDependencies": {
+    "@eslint/js": "^10.0.0",
+    "@types/node": "^22.0.0",
+    "eslint": "^10.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^7.0.0",
+    "typescript-eslint": "^8.0.0"
+  }
+}

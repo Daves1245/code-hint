@@ -18,8 +18,12 @@
     "allowImportingTsExtensions": true,
     "noEmit": true,
     "skipLibCheck": true,
-    // "types": ["node"],
+    "types": ["node"],
     // and npm install -D @types/node
+
+    "paths": {
+      "@code-hint/cli/": ["./cli/src/*"]
+    },
 
     // Other Outputs
     "sourceMap": true,
@@ -39,12 +43,11 @@
     // "noPropertyAccessFromIndexSignature": true,
 
     // Recommended Options
-    "strict": true,
     "jsx": "react-jsx",
     "verbatimModuleSyntax": true,
     "isolatedModules": true,
     "noUncheckedSideEffectImports": true,
-    "moduleDetection": "force",
-    "skipLibCheck": true,
-  }
+    "moduleDetection": "force"
+  },
+  "exclude": ["docs"]
 }

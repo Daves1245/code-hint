@@ -1,5 +1,16 @@
 # vim
 *.sw*
 
+# npm
+node_modules/
+
 # tags
 .tags
+
+# credentials
+credentials/credentials.toml
+
+# build output
+dist/
+docs/build
+docs/.docusaurus

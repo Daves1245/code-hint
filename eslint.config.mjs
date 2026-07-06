@@ -1,16 +1,23 @@
-import eslint from '@eslint/js';
-import tseslint from 'typescript-eslint';
+import eslint from "@eslint/js";
+import tseslint from "typescript-eslint";
+import { defineConfig } from "eslint/config";
 
-export default eslint.defineConfig([
+export default defineConfig([
+  {
+    ignores: ["docs/"],
+  },
   eslint.configs.recommended,
   ...tseslint.configs.recommended,
   ...tseslint.configs.stylistic,
   {
     rules: {
-      '@typescript-eslint/no-explicit-any': 'error',
-      '@typescript-eslint/no-unused-vars': ['error', { 'argsIgnorePattern': '^_' }],
-      'no-console': 'warn',
-      'prefer-const': 'error',
+      "@typescript-eslint/no-explicit-any": "error",
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        { argsIgnorePattern: "^_" },
+      ],
+      "no-console": "warn",
+      "prefer-const": "error",
     },
   },
 ]);

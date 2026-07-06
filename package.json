@@ -4,24 +4,38 @@
   "description": "A badly written code assistant",
   "type": "module",
   "main": "dist/api/index.js",
+  "workspaces": [
+    "agents",
+    "api",
+    "cli",
+    "evals",
+    "include",
+    "scripts",
+    "store"
+  ],
   "scripts": {
     "build": "tsc",
-    "dev:api": "tsx watch api/index.ts",
-    "dev:cli": "tsx cli/index.ts",
-    "run:script": "tsx scripts/run.ts",
+    "dev:api": "tsx watch api/src/index.ts",
+    "dev:cli": "tsx cli/src/index.tsx",
+    "run:script": "tsx scripts/src/run.ts",
     "start:api": "node dist/api/index.js",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "npm run test --workspaces --if-present"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {},
   "devDependencies": {
     "@eslint/js": "^10.0.0",
-    "@types/node": "^22.0.0",
-    "eslint": "^10.0.0",
+    "@types/node": "^22.20.0",
+    "@types/typescript": "^0.4.29",
+    "eslint": "^10.6.0",
+    "prettier": "3.9.4",
     "tsx": "^4.0.0",
-    "typescript": "^7.0.0",
-    "typescript-eslint": "^8.0.0"
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.62.0",
+    "vitest": "^4.1.9"
   }
 }

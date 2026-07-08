@@ -1,7 +1,9 @@
 import { App } from "./app";
 
 export default async function main() {
-  return <App />;
+    return <App
+        prompt=""
+        />;
 }
 
 void main();

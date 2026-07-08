@@ -8,5 +8,8 @@
   "main": "index.js",
   "scripts": {
     "test": "vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "terminal-size": "^4.0.1"
   }
 }

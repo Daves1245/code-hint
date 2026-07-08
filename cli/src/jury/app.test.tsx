@@ -12,12 +12,12 @@ describe("App", () => {
   });
 
   it("Should render the prompt from the store", async () => {
-    AppStore.getState().setPrompt("what does this code do?");
+    AppStore.getState().chatState.setPrompt("what does this code do?");
 
     const { renderer, captureCharFrame } = await testRender(<App />, {});
 
     expect(captureCharFrame()).toContain("what does this code do?");
     renderer.destroy();
-    AppStore.getState().setPrompt("");
+    AppStore.getState().chatState.setPrompt("");
   });
 });

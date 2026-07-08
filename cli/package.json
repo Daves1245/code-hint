@@ -22,6 +22,8 @@
   },
   "dependencies": {
     "react-reconciler": "^0.33.0",
-    "store": "*"
+    "store": "*",
+    "include": "*",
+    "agents": "*"
   }
 }

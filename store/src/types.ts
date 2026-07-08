@@ -18,7 +18,7 @@ export type AuthState =
 export interface Settings {}
 
 export interface UIState {
-    input: string;
-    state: { type: "error"; errmsg: string } | { type: "ok"; data: {} };
-    screenDimensions: [number, number];
+  input: string;
+  state: { type: "error"; errmsg: string } | { type: "ok"; data: {} };
+  screenDimensions: [number, number];
 }

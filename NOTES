@@ -1,0 +1,5 @@
+in cli/, when running vitest, we hit this error:
+
+Cannot find module 'react-reconciler/constants' imported from @opentui/react/chunk-rm53pqj2.js
+
+it seems like this is an upstream error? from opentui/react getting exposed to strict ESM node

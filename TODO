@@ -1,0 +1,39 @@
+misc:
+
+api:
+- LLM provider
+* credentials file / auth & flow
+* zod validation
+
+cli:
+* hello world
+* test suite
+* hook chat into app, and render App
+* render to the full size of the screen
+
+docs:
+* pick and setup a doc system
+* stub for each system
+
+evals:
+- test suite
+- build other systems
+
+include:
+- test suite
+
+scripts:
+- test suite
+
+store:
+- 
+
+Memory / Context:
+	- Maintain a knowledge graph of projects and research
+	- Router determines where to find the answers to a question
+
+Research:
+	- Google and find best resources to answer query
+	- If a great match is found, open it in a tab
+	- Quickly spit out a summary of results
+	- Optionally add to memory / context layer

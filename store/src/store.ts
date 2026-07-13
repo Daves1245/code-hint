@@ -13,6 +13,10 @@ export const AppStore = create<AppState>()((set) => ({
   },
   uiState: {
     input: "",
+    setInput: (input: string) =>
+      set((state: AppState) => ({
+        uiState: { ...state.uiState, input },
+      })),
     state: { type: "ok", data: {} },
     screenDimensions: getScreenDimensions(),
   },

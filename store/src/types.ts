@@ -20,6 +20,7 @@ export interface Settings {}
 
 export interface UIState {
   input: string;
+  setInput: (input: string) => void;
   state: { type: "error"; errmsg: string } | { type: "ok"; data: {} };
   screenDimensions: {
     height: number;

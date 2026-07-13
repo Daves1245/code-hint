@@ -8,7 +8,9 @@ export interface AppState {
 
 export interface ChatState {
   prompt: string;
+  history: string[];
   setPrompt: (prompt: string) => void;
+  setHistory: (history: string[]) => void;
 }
 
 export type AuthState =
@@ -20,10 +22,13 @@ export interface Settings {}
 
 export interface UIState {
   input: string;
+  history: string;
   setInput: (input: string) => void;
   state: { type: "error"; errmsg: string } | { type: "ok"; data: {} };
   screenDimensions: {
     height: number;
     width: number;
   };
+  focusedId: string | null;
+  setFocusedId: (focusedId: string | null) => void;
 }

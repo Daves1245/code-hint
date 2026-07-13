@@ -1,6 +1,8 @@
 export interface AppState {
   authState: AuthState;
   chatState: ChatState;
+  uiState: UIState;
+  setUIState: (state: UIState) => void;
   setAuthState: (state: AuthState) => void;
   setChatState: (state: ChatState) => void;
 }
@@ -19,6 +21,5 @@ export interface Settings {}
 
 export interface UIState {
   input: string;
-  state: { type: "error"; errmsg: string } | { type: "ok"; data: {} };
   screenDimensions: [number, number];
 }

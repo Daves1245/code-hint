@@ -7,7 +7,7 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "dev": "run src/index.tsx --cwd ..",
+    "dev": "bun src/index.tsx",
     "test": "vitest run --passWithNoTests",
     "test:watch": "vitest"
   },

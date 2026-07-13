@@ -8,7 +8,7 @@
   "main": "index.js",
   "scripts": {
     "build": "tsc",
-    "bench": "run judge.ts",
+    "bench": "tsx src/judge.ts",
     "test": "vitest run --passWithNoTests"
   }
 }

@@ -20,7 +20,12 @@ export const App = ({ prompt }: AppProps) => {
       border
     >
       <box border width="100%" padding={1}>
-        <input width="100%" />
+        <input
+          width="100%"
+          value={uiState.input}
+          onInput={uiState.setInput}
+          onSubmit={() => chatState.setPrompt(uiState.input)}
+        />
       </box>
     </box>
   );

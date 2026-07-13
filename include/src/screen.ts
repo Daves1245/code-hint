@@ -1,5 +1,6 @@
 import terminalSize from "terminal-size";
 
 export const getScreenDimensions = () => {
-  return terminalSize();
+  const { columns, rows } = terminalSize();
+  return { width: columns, height: rows };
 };

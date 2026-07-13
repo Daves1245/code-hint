@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { getScreenDimensions } from "include";
 import type { AppState, AuthState, ChatState } from "./types";
 
 export const AppStore = create<AppState>()((set) => ({
@@ -9,6 +10,11 @@ export const AppStore = create<AppState>()((set) => ({
       set((state: AppState) => ({
         chatState: { ...state.chatState, prompt },
       })),
+  },
+  uiState: {
+      input: "",
+      state: { type: 'ok', data: {}},
+      screenDimensions: getScreenDimensions(),
   },
   setAuthState: (authState: AuthState) => set({ authState }),
   setChatState: (chatState: ChatState) => set({ chatState }),

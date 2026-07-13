@@ -5,6 +5,10 @@ interface AppProps {
 }
 
 export const App = ({ prompt }: AppProps) => {
-  AppStore.getState().chatState.setPrompt(prompt || "Hello, world!");
-  return <text>{AppStore.getState().chatState.prompt}</text>;
+  const chatState = AppStore.getState().chatState;
+  const authState = AppStore.getState().authState;
+  const uiState = AppStore.getState().uiState;
+
+  chatState.setPrompt(prompt || "Hello, world!");
+  return <text>{chatState.prompt}</text>;
 };

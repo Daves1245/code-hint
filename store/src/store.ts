@@ -12,9 +12,9 @@ export const AppStore = create<AppState>()((set) => ({
       })),
   },
   uiState: {
-      input: "",
-      state: { type: 'ok', data: {}},
-      screenDimensions: getScreenDimensions(),
+    input: "",
+    state: { type: "ok", data: {} },
+    screenDimensions: getScreenDimensions(),
   },
   setAuthState: (authState: AuthState) => set({ authState }),
   setChatState: (chatState: ChatState) => set({ chatState }),

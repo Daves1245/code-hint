@@ -1,4 +1,5 @@
 import { AppStore } from "store";
+import { Box } from "@opentui/core";
 
 interface AppProps {
   prompt?: string;
@@ -10,5 +11,6 @@ export const App = ({ prompt }: AppProps) => {
   const uiState = AppStore.getState().uiState;
 
   chatState.setPrompt(prompt || "Hello, world!");
-  return <text>{chatState.prompt}</text>;
+
+  return Box();
 };

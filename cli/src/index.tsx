@@ -1,11 +1,11 @@
 import { App } from "./app";
-import { getScreenDimensions } from "include";
-import { createCliRenderer, Box, Text, Input } from "@opentui/core";
+import { createCliRenderer } from "@opentui/core";
+import { createRoot } from "@opentui/react";
 
 const renderer = await createCliRenderer();
 
 export default async function main() {
-  renderer.root.add(App);
+  createRoot(renderer).render(<App />);
 }
 
 void main();

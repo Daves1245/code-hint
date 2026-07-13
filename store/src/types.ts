@@ -24,5 +24,5 @@ export interface UIState {
   screenDimensions: {
     height: number;
     width: number;
-  }
+  };
 }

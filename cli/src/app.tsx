@@ -20,7 +20,7 @@ export const App = ({ prompt }: AppProps) => {
       border
     >
       <box border width={uiState.screenDimensions.width}>
-        <input />
+        <input width="100%" padding={1} />
       </box>
     </box>
   );

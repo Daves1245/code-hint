@@ -4,12 +4,9 @@ interface AppProps {
   prompt?: string;
 }
 
-export const App = ({ prompt }: AppProps) => {
+const Screen = () => {
   const chatState = AppStore.getState().chatState;
-  const authState = AppStore.getState().authState;
   const uiState = AppStore.getState().uiState;
-
-  chatState.setPrompt(prompt || "Hello, world!");
 
   return (
     <box
@@ -23,10 +20,20 @@ export const App = ({ prompt }: AppProps) => {
         <input
           width="100%"
           value={uiState.input}
+          focused={uiState.focusedId === "input"}
           onInput={uiState.setInput}
           onSubmit={() => chatState.setPrompt(uiState.input)}
         />
       </box>
     </box>
   );
+};
+
+export const App = ({ prompt }: AppProps) => {
+  const chatState = AppStore.getState().chatState;
+  const authState = AppStore.getState().authState;
+
+  chatState.setPrompt(prompt || "Hello, world!");
+
+  return <Screen />;
 };

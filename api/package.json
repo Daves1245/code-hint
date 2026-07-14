@@ -9,9 +9,5 @@
   "scripts": {
     "test": "vitest run --passWithNoTests",
     "test:watch": "vitest"
-  },
-  "devDependencies": {
-    "smol-toml": "^1.7.0",
-    "zod": "^4.4.3"
   }
 }

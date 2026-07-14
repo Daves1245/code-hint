@@ -45,14 +45,11 @@ const Screen = () => {
           onInput={uiState.setInput}
           onSubmit={(value) => {
             if (typeof value !== "string") {
-              log.warn(
-                { value },
-                "onSubmit received a non-string value",
-              );
+              log.warn({ value }, "onSubmit received a non-string value");
               return;
             }
             uiState.appendHistory(value);
-            value="";
+            value = "";
             uiState.setInput("");
           }}
         />

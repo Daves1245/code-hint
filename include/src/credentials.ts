@@ -5,7 +5,11 @@ import fs from "fs";
 const credentialsSchema = z.object({
   llm_provider: z.string(),
   llm_api_key: z.string(),
-  logger_level: z.string().default("info"),
+  logger: z
+    .object({
+      level: z.string().default("info"),
+    })
+    .default({ level: "info" }),
 });
 
 export type Credentials = z.infer<typeof credentialsSchema>;

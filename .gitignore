@@ -8,7 +8,7 @@ node_modules/
 .tags
 
 # credentials
-credentials/credentials.toml
+include/credentials/credentials.toml
 
 # build output
 dist/

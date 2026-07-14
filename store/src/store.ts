@@ -15,6 +15,13 @@ export const AppStore = create<AppState>()((set) => ({
       set((state: AppState) => ({
         chatState: { ...state.chatState, history },
       })),
+    appendHistory: (entry: string) =>
+      set((state: AppState) => ({
+        chatState: {
+          ...state.chatState,
+          history: [...state.chatState.history, entry],
+        },
+      })),
   },
   uiState: {
     input: "",
@@ -22,10 +29,17 @@ export const AppStore = create<AppState>()((set) => ({
       set((state: AppState) => ({
         uiState: { ...state.uiState, input },
       })),
-    history: "",
-    setHistory: (history: string) =>
+    history: [],
+    setHistory: (history: string[]) =>
       set((state: AppState) => ({
         uiState: { ...state.uiState, history },
+      })),
+    appendHistory: (entry: string) =>
+      set((state: AppState) => ({
+        uiState: {
+          ...state.uiState,
+          history: [...state.uiState.history, entry],
+        },
       })),
     state: { type: "ok", data: {} },
     screenDimensions: getScreenDimensions(),

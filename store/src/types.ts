@@ -11,6 +11,7 @@ export interface ChatState {
   history: string[];
   setPrompt: (prompt: string) => void;
   setHistory: (history: string[]) => void;
+  appendHistory: (entry: string) => void;
 }
 
 export type AuthState =
@@ -22,8 +23,10 @@ export interface Settings {}
 
 export interface UIState {
   input: string;
-  history: string;
+  history: string[];
   setInput: (input: string) => void;
+  setHistory: (history: string[]) => void;
+  appendHistory: (entry: string) => void;
   state: { type: "error"; errmsg: string } | { type: "ok"; data: {} };
   screenDimensions: {
     height: number;

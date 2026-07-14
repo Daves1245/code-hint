@@ -5,17 +5,21 @@ import path from "path";
 
 // XXX: cwd-independent path resolution as a stopgap; revisit when credentials
 // migrates to a proper settings/config module.
-const credentialsPath = path.join(import.meta.dirname, "../credentials/credentials.toml");
+const credentialsPath = path.join(
+  import.meta.dirname,
+  "../credentials/credentials.toml",
+);
 
 const credentialsSchema = z.object({
   provider: z.object({
     llm_provider: z.string(),
     llm_api_key: z.string(),
   }),
-  logger: z.object({
-    level: z.string().default("info"),
-  })
-  .default({ level: "info" }),
+  logger: z
+    .object({
+      level: z.string().default("info"),
+    })
+    .default({ level: "info" }),
 });
 
 export type Credentials = z.infer<typeof credentialsSchema>;

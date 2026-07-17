@@ -1,6 +1,6 @@
-import terminalSize from "terminal-size";
+import { useTerminalDimensions } from '@opentui/react';
 
 export const getScreenDimensions = () => {
-  const { columns, rows } = terminalSize();
-  return { width: columns, height: rows };
+    const { width, height } = useTerminalDimensions();
+  return { width, height };
 };

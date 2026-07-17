@@ -25,12 +25,7 @@ const Screen = () => {
   }, [uiState.history]);
 
   return (
-    <box
-      height={height}
-      width={width}
-      padding={2}
-      border
-    >
+    <box height={height} width={width} padding={2} border>
       <scrollbox
         flexShrink={1}
         width="100%"

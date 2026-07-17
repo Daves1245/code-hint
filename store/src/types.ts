@@ -32,6 +32,10 @@ export interface UIState {
     height: number;
     width: number;
   };
+  setScreenDimensions: (screenDimensions: {
+    height: number;
+    width: number;
+  }) => void;
   focusedId: string | null;
   setFocusedId: (focusedId: string | null) => void;
 }

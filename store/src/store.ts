@@ -1,5 +1,4 @@
 import { create } from "zustand";
-import { getScreenDimensions } from "include";
 import type { AppState, AuthState, ChatState } from "./types";
 
 export const AppStore = create<AppState>()((set) => ({
@@ -42,7 +41,15 @@ export const AppStore = create<AppState>()((set) => ({
         },
       })),
     state: { type: "ok", data: {} },
-    screenDimensions: getScreenDimensions(),
+    // placeholder until screen initialization, after renderer is initialized
+    screenDimensions: { width: -1, height: -1 },
+    setScreenDimensions: (screenDimensions: {
+      height: number;
+      width: number;
+    }) =>
+      set((state: AppState) => ({
+        uiState: { ...state.uiState, screenDimensions },
+      })),
     focusedId: "input",
     setFocusedId: (focusedId: string | null) =>
       set((state: AppState) => ({

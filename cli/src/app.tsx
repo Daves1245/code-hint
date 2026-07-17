@@ -1,6 +1,7 @@
 import { AppStore } from "store";
 import { log } from "include";
-import { useEffect } from "react";
+import { useEffect, useLayoutEffect } from "react";
+import { useTerminalDimensions } from "@opentui/react";
 
 interface AppProps {
   prompt?: string;
@@ -9,6 +10,12 @@ interface AppProps {
 const Screen = () => {
   const chatState = AppStore((state) => state.chatState);
   const uiState = AppStore((state) => state.uiState);
+  const { width, height } = useTerminalDimensions();
+
+  useLayoutEffect(() => {
+    // replace placeholder screen dimension values
+    uiState.setScreenDimensions({ width, height });
+  }, [width, height]);
 
   useEffect(() => {
     if (uiState.history.length === 0) return;
@@ -19,9 +26,8 @@ const Screen = () => {
 
   return (
     <box
-      height={uiState.screenDimensions.height}
-      width={uiState.screenDimensions.width}
-      flexDirection="column"
+      height={height}
+      width={width}
       padding={2}
       border
     >

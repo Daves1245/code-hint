@@ -1,6 +1,6 @@
-import { useTerminalDimensions } from '@opentui/react';
+import { useTerminalDimensions } from "@opentui/react";
 
 export const getScreenDimensions = () => {
-    const { width, height } = useTerminalDimensions();
+  const { width, height } = useTerminalDimensions();
   return { width, height };
 };

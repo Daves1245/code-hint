@@ -17,6 +17,28 @@ const Screen = () => {
     chatState.appendHistory(submitted);
   }, [uiState.history]);
 
+  // outer box: border (1+1) + padding (2+2); input box: border (1+1) + padding (1+1)
+  const OUTER_CHROME = 6;
+  const INPUT_CHROME = 4;
+  const SCROLLBOX_PADDING = 2;
+  const availableInputWidth = Math.max(
+    uiState.screenDimensions.width - OUTER_CHROME - INPUT_CHROME,
+    1,
+  );
+  const inputLines = Math.max(
+    1,
+    Math.ceil(uiState.input.length / availableInputWidth),
+  );
+  const inputBoxHeight = INPUT_CHROME + inputLines;
+  const maxHistoryHeight = Math.max(
+    uiState.screenDimensions.height - OUTER_CHROME - inputBoxHeight,
+    0,
+  );
+  const historyHeight = Math.min(
+    uiState.history.length + SCROLLBOX_PADDING,
+    maxHistoryHeight,
+  );
+
   return (
     <box
       height={uiState.screenDimensions.height}
@@ -25,6 +47,7 @@ const Screen = () => {
       border
     >
       <scrollbox
+        height={historyHeight}
         flexShrink={1}
         width="100%"
         scrollY
@@ -36,7 +59,13 @@ const Screen = () => {
           <text key={i}>{entry}</text>
         ))}
       </scrollbox>
-      <box border width="100%" padding={1} flexShrink={0}>
+      <box
+        border
+        width="100%"
+        padding={1}
+        flexShrink={0}
+        height={inputBoxHeight}
+      >
         <input
           width="100%"
           value={uiState.input}

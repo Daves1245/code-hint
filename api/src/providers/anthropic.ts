@@ -15,7 +15,7 @@ export function init() {
 
 export async function stream() {
   return client.messages.stream({
-    model: "claude-opus-4-8",
+    model: credentials.provider.model,
     max_tokens: 16000,
     messages: [{ role: "user", content: "" }],
   });

@@ -14,6 +14,7 @@ const credentialsSchema = z.object({
   provider: z.object({
     llm_provider: z.string(),
     llm_api_key: z.string(),
+    model: z.string(),
   }),
   logger: z
     .object({

@@ -1,5 +1,5 @@
 import { AppStore } from "store";
-import { log } from "include";
+import { log } from "include/src/logger";
 import { useEffect } from "react";
 
 interface AppProps {

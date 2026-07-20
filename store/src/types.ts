@@ -22,9 +22,7 @@ export type AuthState =
 export interface Settings {}
 
 export interface UIState {
-  input: string;
   history: string[];
-  setInput: (input: string) => void;
   setHistory: (history: string[]) => void;
   appendHistory: (entry: string) => void;
   state: { type: "error"; errmsg: string } | { type: "ok"; data: {} };
@@ -36,6 +34,8 @@ export interface UIState {
     height: number;
     width: number;
   }) => void;
+  inputHeight: number;
+  setInputHeight: (inputHeight: number) => void;
   focusedId: string | null;
   setFocusedId: (focusedId: string | null) => void;
 }

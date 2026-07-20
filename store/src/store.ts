@@ -23,11 +23,6 @@ export const AppStore = create<AppState>()((set) => ({
       })),
   },
   uiState: {
-    input: "",
-    setInput: (input: string) =>
-      set((state: AppState) => ({
-        uiState: { ...state.uiState, input },
-      })),
     history: [],
     setHistory: (history: string[]) =>
       set((state: AppState) => ({
@@ -49,6 +44,12 @@ export const AppStore = create<AppState>()((set) => ({
     }) =>
       set((state: AppState) => ({
         uiState: { ...state.uiState, screenDimensions },
+      })),
+    // border(2) + padding(2) + 1 empty line, matches PromptInput's initial layout
+    inputHeight: 5,
+    setInputHeight: (inputHeight: number) =>
+      set((state: AppState) => ({
+        uiState: { ...state.uiState, inputHeight },
       })),
     focusedId: "input",
     setFocusedId: (focusedId: string | null) =>

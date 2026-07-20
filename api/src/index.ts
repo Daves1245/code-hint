@@ -1,5 +1,5 @@
-async function main() {
-  console.log("Hello, world!");
-}
+import { verifyCredentials } from "./auth";
 
-void main();
+export async function apiInit(): Promise<void> {
+  return verifyCredentials();
+}

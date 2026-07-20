@@ -17,5 +17,12 @@ export default defineConfig({
     typecheck: {
       enabled: true,
     },
+    server: {
+      // without this, @opentui/react is externalized for SSR and its bare
+      // `react-reconciler/constants` import bypasses the alias above entirely
+      deps: {
+        inline: [/@opentui\/react/],
+      },
+    },
   },
 });

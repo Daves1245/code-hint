@@ -9,8 +9,8 @@
   "scripts": {
     "build": "tsc",
     "dev": "bun src/index.tsx",
-    "test": "vitest run --passWithNoTests",
-    "test:watch": "vitest"
+    "test": "bun --bun vitest run --passWithNoTests",
+    "test:watch": "bun --bun vitest"
   },
   "devDependencies": {
     "@opentui/core": "^0.4.3",

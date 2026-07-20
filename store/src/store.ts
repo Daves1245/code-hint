@@ -35,7 +35,7 @@ export const AppStore = create<AppState>()((set) => ({
           history: [...state.uiState.history, entry],
         },
       })),
-    state: { type: "ok", data: {} },
+    status: { type: "ok" },
     // placeholder until screen initialization, after renderer is initialized
     screenDimensions: { width: -1, height: -1 },
     setScreenDimensions: (screenDimensions: {

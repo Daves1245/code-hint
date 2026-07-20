@@ -1,16 +1,3 @@
- ▐▛███▜▌   Claude Code v2.1.212
-▝▜█████▛▘  Sonnet 5 · Claude Pro
-  ▘▘ ▝▝    ~/documents/code-hint
-
- ⚠ Your login expires in 3 days · run /login to renew
-
- ▎ Extended through July 19
- ▎ We're extending Claude Fable 5 access on all paid plans, as well as keeping Claude Code’s weekly rate limits 50% higher, through July 19.
- ▎
- ▎ As before, you can use up to half of your weekly usage limit on Fable 5. After that, you can keep using Fable 5 with usage credits, or switch to another model to keep working within your remaining limits.
- ▎
- ▎ More details here: https://support.claude.com/en/articles/15424964-claude-fable-5-promotional-access
-
 ❯ /clear                                                                        
 
 ❯ what could cause this error?                                                  

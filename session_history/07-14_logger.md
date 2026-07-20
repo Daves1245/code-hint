@@ -1,22 +1,3 @@
-╭─── Claude Code v2.1.203 ─────────────────────────────────────────────────────╮
-│ │ Tips for getting │
-│ Welcome back [redacted]! │ started │
-│ │ Run /init to create a … │
-│ ▐▛███▜▌ │ ─────────────────────── │
-│ ▝▜█████▛▘ │ What's new │
-│ ▘▘ ▝▝ │ Added a warning when y… │
-│ Sonnet 5 · [redacted] · │ Added a grey ⏸ badge t… │
-│ [redacted]'s Organization │ Added the session's ad… │
-│ ~/documents/code-hint/cli │ /release-notes for more │
-╰──────────────────────────────────────────────────────────────────────────────╯
-
-▎ Extended through July 19
-▎ We're extending Claude Fable 5 access on all paid plans, as well as keeping Claude Code’s weekly rate limits 50% higher, through July 19.
-▎
-▎ As before, you can use up to half of your weekly usage limit on Fable 5. After that, you can keep using Fable 5 with usage credits, or switch to another model to keep working within your remaining limits.
-▎
-▎ More details here: https://support.claude.com/en/articles/15424964-claude-fable-5-promotional-access
-
 ❯ /clear
 
 ❯ <input onSubmit /> onSubmit type and arguments

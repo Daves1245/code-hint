@@ -1,23 +1,36 @@
+export type Loadable<T> =
+  | { status: "idle" }
+  | { status: "loading"; taskId: string; prevData?: T }
+  | { status: "error"; prevData?: T; message: string }
+  | { status: "success"; data: T };
+
+export function getTaskId<T>(loadable?: Loadable<T> | null): string | null {
+  if (!loadable) return null;
+  switch (loadable.status) {
+    case "loading":
+      return loadable.taskId;
+    default:
+      return null;
+  }
+}
+
 export interface AppState {
-  authState: AuthState;
+  authState: Loadable<null>;
   chatState: ChatState;
   uiState: UIState;
-  setAuthState: (state: AuthState) => void;
+  setAuthState: (state: Loadable<null>) => void;
   setChatState: (state: ChatState) => void;
 }
 
 export interface ChatState {
   prompt: string;
   history: string[];
+  mode: ChatMode;
   setPrompt: (prompt: string) => void;
   setHistory: (history: string[]) => void;
   appendHistory: (entry: string) => void;
+  setMode: (mode: ChatMode) => void;
 }
-
-export type AuthState =
-  | { type: "idle" }
-  | { type: "invalid"; reason: string }
-  | { type: "valid"; data: {} };
 
 export interface Settings {}
 

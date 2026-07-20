@@ -1,8 +1,8 @@
 import { create } from "zustand";
-import type { AppState, AuthState, ChatState } from "./types";
+import type { AppState, ChatMode, ChatState, Loadable } from "./types";
 
 export const AppStore = create<AppState>()((set) => ({
-  authState: { type: "idle" },
+  authState: { status: "idle" },
   chatState: {
     prompt: "",
     setPrompt: (prompt: string) =>
@@ -20,6 +20,12 @@ export const AppStore = create<AppState>()((set) => ({
           ...state.chatState,
           history: [...state.chatState.history, entry],
         },
+      })),
+    // matches router.ts's hard-coded default until mode selection is wired up
+    mode: "executing",
+    setMode: (mode: ChatMode) =>
+      set((state: AppState) => ({
+        chatState: { ...state.chatState, mode },
       })),
   },
   uiState: {
@@ -63,6 +69,16 @@ export const AppStore = create<AppState>()((set) => ({
         uiState: { ...state.uiState, focusedId },
       })),
   },
-  setAuthState: (authState: AuthState) => set({ authState }),
+  setAuthState: (authState: Loadable<null>) =>
+    set((state: AppState) => ({
+      authState,
+      uiState: {
+        ...state.uiState,
+        status:
+          authState.status === "error"
+            ? { type: "error", errmsg: authState.message }
+            : { type: "ok" },
+      },
+    })),
   setChatState: (chatState: ChatState) => set({ chatState }),
 }));

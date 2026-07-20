@@ -25,7 +25,7 @@ export interface UIState {
   history: string[];
   setHistory: (history: string[]) => void;
   appendHistory: (entry: string) => void;
-  state: { type: "error"; errmsg: string } | { type: "ok"; data: {} };
+  status: { type: "error"; errmsg: string } | { type: "ok"; };
   screenDimensions: {
     height: number;
     width: number;
@@ -36,6 +36,8 @@ export interface UIState {
   }) => void;
   inputHeight: number;
   setInputHeight: (inputHeight: number) => void;
+  historyContentHeight: number;
+  setHistoryContentHeight: (historyContentHeight: number) => void;
   focusedId: string | null;
   setFocusedId: (focusedId: string | null) => void;
 }

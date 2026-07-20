@@ -51,6 +51,12 @@ export const AppStore = create<AppState>()((set) => ({
       set((state: AppState) => ({
         uiState: { ...state.uiState, inputHeight },
       })),
+    // padding(2) of the scrollbox content wrapper, no entries yet
+    historyContentHeight: 2,
+    setHistoryContentHeight: (historyContentHeight: number) =>
+      set((state: AppState) => ({
+        uiState: { ...state.uiState, historyContentHeight },
+      })),
     focusedId: "input",
     setFocusedId: (focusedId: string | null) =>
       set((state: AppState) => ({

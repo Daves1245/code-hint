@@ -2,26 +2,10 @@ import { beforeEach, describe, it, expect } from "vitest";
 import { testRender } from "@opentui/react/test-utils";
 import { App } from "../app";
 import { AppStore } from "store";
+import { resetStore, settle, interact } from "./testHelpers";
 
 const LONG_LINE =
   "this is a fairly long line of text that should wrap across multiple visual rows";
-
-function resetStore() {
-  AppStore.getState().chatState.setPrompt("");
-  AppStore.getState().chatState.setHistory([]);
-  AppStore.getState().uiState.setHistory([]);
-  AppStore.getState().uiState.setFocusedId("input");
-  AppStore.getState().uiState.setInputHeight(5);
-  AppStore.getState().uiState.setHistoryContentHeight(2);
-}
-
-// onSizeChange-driven state updates (typing, submitting, resizing) settle
-// over a couple of render passes rather than in the triggering frame itself;
-// waitForVisualIdle() is unusable here because the focused textarea's
-// blinking cursor keeps producing new frames and it never reports idle
-async function settle(renderOnce: () => Promise<void>) {
-  for (let i = 0; i < 3; i++) await renderOnce();
-}
 
 describe("input/history auto-sizing", () => {
   beforeEach(() => {
@@ -36,7 +20,7 @@ describe("input/history auto-sizing", () => {
 
     const singleLineHeight = AppStore.getState().uiState.inputHeight;
 
-    await mockInput.typeText(LONG_LINE);
+    await interact(() => mockInput.typeText(LONG_LINE));
     await settle(renderOnce);
 
     const wrappedFrame = captureCharFrame();
@@ -49,14 +33,14 @@ describe("input/history auto-sizing", () => {
       singleLineHeight,
     );
 
-    mockInput.pressEnter();
+    await interact(() => mockInput.pressEnter());
     await settle(renderOnce);
 
     // submitting clears the textarea and the box collapses back down
     expect(AppStore.getState().uiState.inputHeight).toBe(singleLineHeight);
     expect(AppStore.getState().uiState.history).toEqual([LONG_LINE]);
 
-    renderer.destroy();
+    await interact(() => renderer.destroy());
   });
 
   it("wraps long history entries instead of truncating them, and grows the history box to fit", async () => {
@@ -67,8 +51,8 @@ describe("input/history auto-sizing", () => {
 
     const emptyContentHeight = AppStore.getState().uiState.historyContentHeight;
 
-    await mockInput.typeText(LONG_LINE);
-    mockInput.pressEnter();
+    await interact(() => mockInput.typeText(LONG_LINE));
+    await interact(() => mockInput.pressEnter());
     await settle(renderOnce);
 
     const frame = captureCharFrame();
@@ -79,7 +63,7 @@ describe("input/history auto-sizing", () => {
       emptyContentHeight + 1,
     );
 
-    renderer.destroy();
+    await interact(() => renderer.destroy());
   });
 
   it("re-wraps and re-sizes both panes when the terminal is resized", async () => {
@@ -88,16 +72,21 @@ describe("input/history auto-sizing", () => {
       await testRender(<App />, { width: 100, height: 20 });
     await settle(renderOnce);
 
-    await mockInput.typeText(LONG_LINE);
-    mockInput.pressEnter();
+    await interact(() => mockInput.typeText(LONG_LINE));
+    await interact(() => mockInput.pressEnter());
     await settle(renderOnce);
 
     // wide enough to fit on a single visual row
     expect(captureCharFrame()).toContain(LONG_LINE);
     const wideHeight = AppStore.getState().uiState.historyContentHeight;
 
-    resize(60, 20);
-    AppStore.getState().uiState.setScreenDimensions({ width: 60, height: 20 });
+    await interact(() => {
+      resize(60, 20);
+      AppStore.getState().uiState.setScreenDimensions({
+        width: 60,
+        height: 20,
+      });
+    });
     await settle(renderOnce);
 
     // too narrow now, so it must wrap into more lines than before
@@ -106,6 +95,6 @@ describe("input/history auto-sizing", () => {
       wideHeight,
     );
 
-    renderer.destroy();
+    await interact(() => renderer.destroy());
   });
 });

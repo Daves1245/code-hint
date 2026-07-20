@@ -1,6 +1,7 @@
 import { AppStore } from "store";
 import { useEffect } from "react";
 import { PromptInput } from "./components/PromptInput";
+import { HistoryPane } from "./components/HistoryPane";
 
 interface AppProps {
   prompt?: string;
@@ -19,13 +20,12 @@ const Screen = () => {
 
   // outer box: border (1+1) + padding (2+2)
   const OUTER_CHROME = 6;
-  const SCROLLBOX_PADDING = 2;
   const maxHistoryHeight = Math.max(
     uiState.screenDimensions.height - OUTER_CHROME - uiState.inputHeight,
     0,
   );
   const historyHeight = Math.min(
-    uiState.history.length + SCROLLBOX_PADDING,
+    uiState.historyContentHeight,
     maxHistoryHeight,
   );
 
@@ -36,19 +36,11 @@ const Screen = () => {
       padding={2}
       border
     >
-      <scrollbox
+      <HistoryPane
+        history={uiState.history}
         height={historyHeight}
-        flexShrink={1}
-        width="100%"
-        scrollY
-        stickyScroll
-        stickyStart="bottom"
-        contentOptions={{ flexDirection: "column", padding: 1 }}
-      >
-        {uiState.history.map((entry, i) => (
-          <text key={i}>{entry}</text>
-        ))}
-      </scrollbox>
+        onContentSizeChange={uiState.setHistoryContentHeight}
+      />
       <PromptInput
         focused={uiState.focusedId === "input"}
         onSubmit={(value) => uiState.appendHistory(value)}

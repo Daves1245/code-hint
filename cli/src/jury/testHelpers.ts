@@ -4,10 +4,12 @@ import { AppStore } from "store";
 export function resetStore() {
   AppStore.getState().chatState.setPrompt("");
   AppStore.getState().chatState.setHistory([]);
+  AppStore.getState().chatState.setMode("executing");
   AppStore.getState().uiState.setHistory([]);
   AppStore.getState().uiState.setFocusedId("input");
   AppStore.getState().uiState.setInputHeight(5);
   AppStore.getState().uiState.setHistoryContentHeight(2);
+  AppStore.getState().setAuthState({ status: "idle" });
 }
 
 // onSizeChange-driven state updates (typing, submitting, resizing) settle

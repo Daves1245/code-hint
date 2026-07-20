@@ -2,6 +2,7 @@ import { createCliRenderer } from "@opentui/core";
 import { App } from "./app";
 import { createRoot } from "@opentui/react";
 import { AppStore } from "store";
+import { runAuthTransition } from "./authTransition";
 
 const renderer = await createCliRenderer();
 
@@ -14,6 +15,8 @@ renderer.on("resize", (width: number, height: number) => {
 });
 
 export default async function main() {
+  await runAuthTransition();
+
   createRoot(renderer).render(<App />);
 }
 

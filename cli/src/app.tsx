@@ -2,6 +2,7 @@ import { AppStore } from "store";
 import { useEffect } from "react";
 import { PromptInput } from "./components/PromptInput";
 import { HistoryPane } from "./components/HistoryPane";
+import { Airline } from "./components/Airline";
 
 interface AppProps {
   prompt?: string;
@@ -40,6 +41,12 @@ const Screen = () => {
         history={uiState.history}
         height={historyHeight}
         onContentSizeChange={uiState.setHistoryContentHeight}
+      />
+      <Airline
+        error={
+          uiState.status.type === "error" ? uiState.status.errmsg : undefined
+        }
+        chatMode={chatState.mode}
       />
       <PromptInput
         focused={uiState.focusedId === "input"}

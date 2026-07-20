@@ -7,7 +7,12 @@
 
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
-    "module": "nodenext",
+    // matches cli/root: workspace packages (store, include) point "main" at
+    // raw .ts source with no "exports" map, which nodenext's stricter deep-import
+    // resolution can't follow. tsx (dev) and the root-level tsc (build) are what
+    // actually run/compile this package, and both already resolve fine.
+    "module": "esnext",
+    "moduleResolution": "bundler",
     "target": "esnext",
     "types": [],
     // For nodejs:

@@ -13,11 +13,9 @@
     "module": "esnext",
     "moduleResolution": "bundler",
     "target": "esnext",
-    "types": ["vitest/globals"],
+    "types": ["node", "vitest/globals"],
     // For nodejs:
     // "lib": ["esnext"],
-    // "types": ["node"],
-    // and npm install -D @types/node
 
     // Other Outputs
     "sourceMap": true,

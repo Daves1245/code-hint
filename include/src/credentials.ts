@@ -15,6 +15,9 @@ const credentialsSchema = z.object({
     llm_provider: z.string(),
     llm_api_key: z.string(),
     model: z.string(),
+    max_tokens: z.number().int().positive().default(16000),
+    // must be >= 1024 and < max_tokens
+    thinking_budget_tokens: z.number().int().min(1024).default(8000),
   }),
   logger: z
     .object({

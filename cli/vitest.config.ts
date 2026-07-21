@@ -19,9 +19,12 @@ export default defineConfig({
     },
     server: {
       // without this, @opentui/react is externalized for SSR and its bare
-      // `react-reconciler/constants` import bypasses the alias above entirely
+      // `react-reconciler/constants` import bypasses the alias above entirely.
+      // zod is inlined for the same class of issue: externalized, its dual
+      // ESM/CJS "exports" map resolves to the wrong internal file under bun,
+      // losing the `z` named export (see include/src/credentials.ts).
       deps: {
-        inline: [/@opentui\/react/],
+        inline: [/@opentui\/react/, "zod"],
       },
     },
   },

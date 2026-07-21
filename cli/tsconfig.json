@@ -2,8 +2,10 @@
   // Visit https://aka.ms/tsconfig to read more about this file
   "compilerOptions": {
     // File Layout
+    "composite": true,
     "rootDir": "./src",
-    "outDir": "./dist",
+    "outDir": "../dist/cli",
+    "tsBuildInfoFile": "./tsconfig.tsbuildinfo",
 
     "jsx": "react-jsx",
     "jsxImportSource": "@opentui/react",
@@ -42,5 +44,10 @@
     "moduleDetection": "force",
     "skipLibCheck": true
   },
-  "include": ["src"]
+  "include": ["src"],
+  "references": [
+    { "path": "../store" },
+    { "path": "../include" },
+    { "path": "../api" }
+  ]
 }

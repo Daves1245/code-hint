@@ -10,7 +10,7 @@ import * as anthropic from "./providers/anthropic";
 
 const credentials = loadCredentials();
 
-export const SYSTEM_PROMPT = `You are code-hint, a coding assistant running in a terminal.`;
+export const SYSTEM_PROMPT = `You're code-hint, an assistant that explains code.`;
 
 // wrap raw user text into the Message shape flows append to history before calling stream()
 export function prompt(input: string): Message {

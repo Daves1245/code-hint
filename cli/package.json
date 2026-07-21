@@ -7,7 +7,7 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -b",
     "dev": "bun src/index.tsx",
     "test": "bun --bun vitest run --passWithNoTests",
     "test:watch": "bun --bun vitest"

@@ -1,53 +1,15 @@
 {
-  // Visit https://aka.ms/tsconfig to read more about this file
-  "compilerOptions": {
-    // File Layout
-    "rootDir": "./",
-    "outDir": "./dist",
-
-    // Environment Settings
-    // See also https://aka.ms/tsconfig/module
-    "module": "esnext",
-    "target": "ES2022",
-    "strict": true,
-    "composite": true,
-    "types": [],
-    // For nodejs:
-    "lib": ["ES2023", "DOM"],
-    "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
-    "noEmit": true,
-    "skipLibCheck": true,
-    "types": ["node"],
-    // and npm install -D @types/node
-
-    "paths": {
-      "@code-hint/cli/": ["./cli/src/*"]
-    },
-
-    // Other Outputs
-    "sourceMap": true,
-    "declaration": true,
-    "declarationMap": true,
-
-    // Stricter Typechecking Options
-    "noUncheckedIndexedAccess": true,
-    "exactOptionalPropertyTypes": true,
-
-    // Style Options
-    "noImplicitReturns": true,
-    "noImplicitOverride": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
-    "noPropertyAccessFromIndexSignature": true,
-
-    // Recommended Options
-    "jsx": "react-jsx",
-    "verbatimModuleSyntax": true,
-    "isolatedModules": true,
-    "noUncheckedSideEffectImports": true,
-    "moduleDetection": "force"
-  },
-  "exclude": ["docs"]
+  // Solution file for `tsc -b`: builds every workspace package in dependency
+  // order into a single root-level dist/ (e.g. dist/cli/index.js). Holds no
+  // compilerOptions of its own - each package's tsconfig.json is self-contained.
+  "files": [],
+  "references": [
+    { "path": "./agents" },
+    { "path": "./api" },
+    { "path": "./cli" },
+    { "path": "./evals" },
+    { "path": "./include" },
+    { "path": "./scripts" },
+    { "path": "./store" }
+  ]
 }

@@ -2,15 +2,18 @@
   // Visit https://aka.ms/tsconfig to read more about this file
   "compilerOptions": {
     // File Layout
-    // "rootDir": "./src",
-    // "outDir": "./dist",
+    "composite": true,
+    "rootDir": "./src",
+    "outDir": "../dist/api",
+    "tsBuildInfoFile": "./tsconfig.tsbuildinfo",
 
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
-    // matches cli/root: workspace packages (store, include) point "main" at
-    // raw .ts source with no "exports" map, which nodenext's stricter deep-import
-    // resolution can't follow. tsx (dev) and the root-level tsc (build) are what
-    // actually run/compile this package, and both already resolve fine.
+    // workspace packages (store, include) point "main" at raw .ts source with
+    // no "exports" map, which nodenext's stricter deep-import resolution can't
+    // follow. bundler resolution plus the project references below (which
+    // resolve store/include through their own composite build) is what
+    // actually makes these deep imports work.
     "module": "esnext",
     "moduleResolution": "bundler",
     "target": "esnext",
@@ -45,5 +48,7 @@
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
     "skipLibCheck": true
-  }
+  },
+  "include": ["src"],
+  "references": [{ "path": "../store" }, { "path": "../include" }]
 }

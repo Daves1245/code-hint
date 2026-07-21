@@ -14,3 +14,4 @@ include/credentials/credentials.toml
 dist/
 docs/build
 docs/.docusaurus
+*.tsbuildinfo

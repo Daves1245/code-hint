@@ -14,7 +14,7 @@
     "store"
   ],
   "scripts": {
-    "build": "npm run build --workspaces --if-present",
+    "build": "tsc -b",
     "dev:api": "tsx watch api/src/index.ts",
     "dev:cli": "tsx cli/src/index.tsx",
     "run:script": "tsx scripts/src/run.ts",

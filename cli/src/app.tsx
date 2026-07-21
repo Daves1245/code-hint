@@ -1,5 +1,7 @@
 import { AppStore } from "store";
-import { useEffect } from "react";
+import { direct } from "api";
+import { log } from "include/src/logger";
+import type { FlowContext } from "store/src/types";
 import { PromptInput } from "./components/PromptInput";
 import { HistoryPane } from "./components/HistoryPane";
 import { Airline } from "./components/Airline";
@@ -8,16 +10,54 @@ interface AppProps {
   prompt?: string;
 }
 
+// runs the direct flow against the prior conversation (ctx.history) plus the
+// newly submitted input, streaming text into uiState.history (one entry per
+// turn, appended to in place as deltas arrive) and recording the assembled
+// reply in chatState.history so the next turn has it as context.
+async function runDirect(ctx: FlowContext, input: string) {
+  let assistantText = "";
+  let started = false;
+
+  try {
+    for await (const event of direct(ctx).run(input)) {
+      if (event.type !== "text" && event.type !== "thinking") continue;
+
+      const uiState = AppStore.getState().uiState;
+      if (started) {
+        uiState.appendToLastEntry(event.text);
+      } else {
+        started = true;
+        uiState.appendHistory(event.text);
+      }
+      if (event.type === "text") assistantText += event.text;
+    }
+  } catch (err) {
+    // XXX surface this once error rendering (TODO) lands
+    log.error(err, "direct flow failed");
+    return;
+  }
+
+  if (assistantText) {
+    AppStore.getState().chatState.appendHistory({
+      role: "assistant",
+      content: assistantText,
+    });
+  }
+}
+
 const Screen = () => {
   const chatState = AppStore((state) => state.chatState);
   const uiState = AppStore((state) => state.uiState);
 
-  useEffect(() => {
-    if (uiState.history.length === 0) return;
-    const submitted = uiState.history[uiState.history.length - 1]!;
-    chatState.setPrompt(submitted);
-    chatState.appendHistory(submitted);
-  }, [uiState.history]);
+  const handleSubmit = (value: string) => {
+    uiState.appendHistory(value);
+    chatState.setPrompt(value);
+
+    const ctx: FlowContext = { history: chatState.history };
+    chatState.appendHistory({ role: "user", content: value });
+
+    void runDirect(ctx, value);
+  };
 
   // outer box: border (1+1) + padding (2+2)
   const OUTER_CHROME = 6;
@@ -50,7 +90,7 @@ const Screen = () => {
       />
       <PromptInput
         focused={uiState.focusedId === "input"}
-        onSubmit={(value) => uiState.appendHistory(value)}
+        onSubmit={handleSubmit}
         onSizeChange={uiState.setInputHeight}
       />
     </box>

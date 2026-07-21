@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { AppState, ChatMode, ChatState, Loadable } from "./types";
+import type { AppState, ChatMode, ChatState, Loadable, Message } from "./types";
 
 export const AppStore = create<AppState>()((set) => ({
   authState: { status: "idle" },
@@ -10,11 +10,11 @@ export const AppStore = create<AppState>()((set) => ({
         chatState: { ...state.chatState, prompt },
       })),
     history: [],
-    setHistory: (history: string[]) =>
+    setHistory: (history: Message[]) =>
       set((state: AppState) => ({
         chatState: { ...state.chatState, history },
       })),
-    appendHistory: (entry: string) =>
+    appendHistory: (entry: Message) =>
       set((state: AppState) => ({
         chatState: {
           ...state.chatState,
@@ -41,6 +41,17 @@ export const AppStore = create<AppState>()((set) => ({
           history: [...state.uiState.history, entry],
         },
       })),
+    appendToLastEntry: (delta: string) =>
+      set((state: AppState) => {
+        const history = state.uiState.history;
+        const last = history[history.length - 1] ?? "";
+        return {
+          uiState: {
+            ...state.uiState,
+            history: [...history.slice(0, -1), last + delta],
+          },
+        };
+      }),
     status: { type: "ok" },
     // placeholder until screen initialization, after renderer is initialized
     screenDimensions: { width: -1, height: -1 },

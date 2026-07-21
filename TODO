@@ -1,7 +1,7 @@
 misc:
 
 api:
-- LLM provider
+* LLM provider
 * credentials file / auth & flow
 * zod validation
 
@@ -10,6 +10,8 @@ cli:
 * test suite
 * hook chat into app, and render App
 * render to the full size of the screen
+* render errors
+* render chat mode
 
 docs:
 * pick and setup a doc system
@@ -26,14 +28,21 @@ scripts:
 - test suite
 
 store:
-- 
+* Loadable async transitions
 
-Memory / Context:
+Context engineering:
 	- Maintain a knowledge graph of projects and research
-	- Router determines where to find the answers to a question
+	- smart 'read' tool: read, but with an optional natural language 'scope' parameter
+	for reducing noise. should the user want to read auth.ts for a specific provider example,
+	simply provide 'auth provider <provider> implementation' as the scope. the tool will return
+	the relevant portions. if not included, will default to the entire file. also has line-by-line
+	and regular grep-like features
+	- index files and perform some preliminary retrieval step for some actions. depending on the complexity,
+	this can include a lot of information. otherwise, works as 'just-in-time' context.
+	- probably add a reranker as well
 
 Research:
 	- Google and find best resources to answer query
 	- If a great match is found, open it in a tab
 	- Quickly spit out a summary of results
-	- Optionally add to memory / context layer
+	- Optionally add to memory / context layer via 'remember' tool

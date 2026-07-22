@@ -1,7 +1,7 @@
 // drives a tool-call loop against the provider until the request is resolved
 import type { Flow, FlowContext, FlowEvent } from "store/src/types";
 
-export function executor(_ctx: FlowContext): Flow {
+export function executing(_ctx: FlowContext): Flow {
   return {
     name: "executing",
     async *run(_input: string): AsyncIterable<FlowEvent> {

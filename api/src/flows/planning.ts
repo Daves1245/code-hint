@@ -1,7 +1,7 @@
 // breaks the request into a plan before any execution happens
 import type { Flow, FlowContext, FlowEvent } from "store/src/types";
 
-export function planner(_ctx: FlowContext): Flow {
+export function planning(_ctx: FlowContext): Flow {
   return {
     name: "planning",
     async *run(_input: string): AsyncIterable<FlowEvent> {

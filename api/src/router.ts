@@ -1,14 +1,14 @@
 import type { ChatMode, Flow, FlowContext } from "store/src/types";
 import { direct } from "./flows/direct";
 import { thinking } from "./flows/thinking";
-import { planner } from "./flows/planner";
-import { executor } from "./flows/executor";
+import { planning } from "./flows/planning";
+import { executing } from "./flows/executing";
 
 const flows: Record<ChatMode, (ctx: FlowContext) => Flow> = {
   direct,
   thinking,
-  planning: planner,
-  executing: executor,
+  planning,
+  executing,
 };
 
 export function route(_prompt: string, ctx: FlowContext): Flow {

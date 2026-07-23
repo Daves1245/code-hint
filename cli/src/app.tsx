@@ -27,15 +27,21 @@ function flowFor(mode: ChatMode) {
 }
 
 // runs the flow selected for chatState.mode against the prior conversation
-// (ctx.history) plus the newly submitted input. Streams text/thinking into
-// uiState.history (one entry per turn, appended to in place as deltas
-// arrive), surfaces tool calls as their own entries, and records the
-// assembled reply in chatState.history so the next turn has it as context.
+// (ctx.history) plus the newly submitted input. Streams into uiState.history as
+// entries appended to in place as deltas arrive - text and thinking become
+// separate entries (they render differently) and tool calls their own entry -
+// and records the assembled reply in chatState.history so the next turn has it
+// as context.
 async function run(ctx: FlowContext, input: string) {
+  AppStore.getState().chatState.setMode("thinking");
   const chatMode = AppStore.getState().chatState.mode;
   const flow = flowFor(chatMode);
   let assistantText = "";
-  let started = false;
+  // the kind of the entry currently being streamed into, or null when the next
+  // delta should open a fresh entry. Tracking it splits text and thinking into
+  // separate entries (they render differently) and starts a new entry after a
+  // tool call.
+  let openKind: "text" | "thinking" | null = null;
 
   try {
     for await (const event of flow(ctx).run(input)) {
@@ -44,17 +50,17 @@ async function run(ctx: FlowContext, input: string) {
       switch (event.type) {
         case "text":
         case "thinking":
-          if (started) {
+          if (openKind === event.type) {
             uiState.appendToLastEntry(event.text);
           } else {
-            started = true;
-            uiState.appendHistory(event.text);
+            openKind = event.type;
+            uiState.appendHistory(event.text, event.type);
           }
           if (event.type === "text") assistantText += event.text;
           break;
         case "tool-call":
           uiState.appendHistory(`Called tool: ${event.name}`);
-          started = false;
+          openKind = null;
           break;
         case "tool-result":
         case "done":
@@ -82,23 +88,13 @@ const Screen = () => {
   const handleSubmit = (value: string) => {
     uiState.appendHistory(value);
     chatState.setPrompt(value);
+    chatState.setMode("thinking");
 
     const ctx: FlowContext = { history: chatState.history };
     chatState.appendHistory({ role: "user", content: value });
 
     void run(ctx, value);
   };
-
-  // outer box: border (1+1) + padding (2+2)
-  const OUTER_CHROME = 6;
-  const maxHistoryHeight = Math.max(
-    uiState.screenDimensions.height - OUTER_CHROME - uiState.inputHeight,
-    0,
-  );
-  const historyHeight = Math.min(
-    uiState.historyContentHeight,
-    maxHistoryHeight,
-  );
 
   return (
     <box
@@ -107,11 +103,7 @@ const Screen = () => {
       padding={2}
       border
     >
-      <HistoryPane
-        history={uiState.history}
-        height={historyHeight}
-        onContentSizeChange={uiState.setHistoryContentHeight}
-      />
+      <HistoryPane history={uiState.history} />
       <Airline
         error={
           uiState.status.type === "error" ? uiState.status.errmsg : undefined

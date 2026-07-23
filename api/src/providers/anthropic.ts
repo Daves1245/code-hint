@@ -117,7 +117,8 @@ function toEvents(raw: MessageStream): AsyncIterable<FlowEvent> {
     wake = null;
   };
 
-  const onText = (delta: string) => push({ event: { type: "text", text: delta } });
+  const onText = (delta: string) =>
+    push({ event: { type: "text", text: delta } });
   const onThinking = (delta: string) =>
     push({ event: { type: "thinking", text: delta } });
   const onContentBlock = (block: Anthropic.ContentBlock) => {

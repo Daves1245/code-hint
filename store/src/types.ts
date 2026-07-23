@@ -119,7 +119,11 @@ export interface LLMStream {
 // a JSON Schema subset covering what tool input schemas actually need:
 // primitive/object/array types, nested properties, and enum constraints.
 export type JSONSchema =
-  | { type: "string" | "number" | "integer" | "boolean" | "null"; description?: string; enum?: (string | number | boolean | null)[] }
+  | {
+      type: "string" | "number" | "integer" | "boolean" | "null";
+      description?: string;
+      enum?: (string | number | boolean | null)[];
+    }
   | { type: "array"; description?: string; items: JSONSchema }
   | {
       type: "object";

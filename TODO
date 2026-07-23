@@ -5,8 +5,13 @@ api:
 * credentials file / auth & flow
 * zod validation
 * fix API errors - they currently flood and break the UI
-* handle parallel tool calls in the executing flow's tool loop
+* parallel tool calls in the executing flow's tool loop (see NOTES # tools): [sub-bullets drafted by Claude]
+  - canonicalize each call's data footprint (symlinks, rel/abs, parent/child, macOS case-insensitivity) before comparing
+  - type calls as static (footprint known up front) or dynamic (unknown until run); dynamic = serialization barrier
+  - group into disjoint components by shared data (union-find); run components in parallel, calls within a component serially in arrival order
 * handle tool call failures (currently a runTool throw crashes the flow instead of surfacing an error to the model or user)
+  - settle each call independently so a rejecting call doesn't drop sibling results (model expects a tool_result per tool_use_id) [drafted by Claude]
+  - within a serial component, short-circuit downstream dependents when an upstream call fails (skipped-due-to-dependency, not run on a false premise) [drafted by Claude]
 
 cli:
 * hello world

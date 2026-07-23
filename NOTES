@@ -3,3 +3,49 @@ in cli/, when running vitest, we hit this error:
 Cannot find module 'react-reconciler/constants' imported from @opentui/react/chunk-rm53pqj2.js
 
 it seems like this is an upstream error? from opentui/react getting exposed to strict ESM node
+
+# tools
+
+<!-- drafted by Claude -->
+multiple tool calls in one turn might touch the same file/data, so
+parallelizing them blindly races. scheduling model:
+
+1. canonicalize each call's data footprint (resolve symlinks/hardlinks,
+   relative vs absolute, parent/child paths; macOS APFS is
+   case-insensitive by default, so Foo.txt == foo.txt) - string equality
+   is not enough to decide "same data".
+2. type each call by footprint: static (footprint knowable up front,
+   e.g. read <path>) or dynamic (footprint unknowable until it runs,
+   e.g. a shell / repo-wide search-or-edit tool). dynamic calls are a
+   serialization barrier - treat them as touching everything.
+3. group calls into disjoint components by shared canonicalized data
+   (union-find, transitive: a call touching {A,B} merges the A and B
+   groups).
+4. run components in parallel; within a component, run serially in
+   arrival order (the order the model emitted them).
+
+why arrival order, not a computed topsort: emission order is a global
+total order, and restricting it to a component is always a valid
+linearization - so no actual topsort is needed. it's also the model's
+*intent* (it emitted every call before seeing any result), and breaking
+intent is more dangerous than "fixing" a backwards call. no case is
+known where we'd want to reorder within a component while preserving
+intent.
+
+note: only write-involving pairs (RW/WR/WW) on the same data are true
+conflicts; two reads of the same file don't need ordering. grouping RR
+into a serial component is safe but needlessly serial.
+
+failure handling: fail fast, but don't leave recovery to the llm - the
+system stays deterministic on failure rather than hoping a (possibly
+weak) model corrects from a degraded tool_result. two parts:
+- Promise.all is fail-fast in the wrong way: one rejecting call aborts
+  the whole batch even though the model expects a tool_result for every
+  tool_use_id it sent. settle each call independently (allSettled /
+  per-call catch) so no result silently goes missing.
+- within a serial component, if an upstream call fails, short-circuit
+  its downstream dependents (report them skipped-due-to-dependency)
+  rather than running them on a false premise (e.g. reading A after its
+  write failed).
+<!-- end Claude-drafted -->
+

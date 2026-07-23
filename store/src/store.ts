@@ -23,7 +23,6 @@ export const AppStore = create<AppState>()(
             history: [...state.chatState.history, entry],
           },
         })),
-      // matches router.ts's hard-coded default until mode selection is wired up
       mode: "executing",
       setMode: (mode: ChatMode) =>
         set((state: AppState) => ({
@@ -97,9 +96,5 @@ export const AppStore = create<AppState>()(
         },
       })),
     setChatState: (chatState: ChatState) => set({ chatState }),
-    setChatMode: (mode: ChatMode) =>
-      set((state: AppState) => {
-        state.chatState.mode = mode;
-      }),
   })),
 );

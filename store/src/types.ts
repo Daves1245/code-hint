@@ -21,7 +21,6 @@ export interface AppState {
   uiState: UIState;
   setAuthState: (state: Loadable<null>) => void;
   setChatState: (state: ChatState) => void;
-  setChatMode: (mode: ChatMode) => void;
 }
 
 export interface ChatState {

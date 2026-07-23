@@ -4,6 +4,9 @@ api:
 * LLM provider
 * credentials file / auth & flow
 * zod validation
+* fix API errors - they currently flood and break the UI
+* handle parallel tool calls in the executing flow's tool loop
+* handle tool call failures (currently a runTool throw crashes the flow instead of surfacing an error to the model or user)
 
 cli:
 * hello world

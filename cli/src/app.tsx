@@ -1,7 +1,7 @@
 import { AppStore } from "store";
-import { direct } from "api";
+import { direct, thinking, planning, executing } from "api";
 import { log } from "include/src/logger";
-import type { FlowContext } from "store/src/types";
+import type { ChatMode, FlowContext } from "store/src/types";
 import { PromptInput } from "./components/PromptInput";
 import { HistoryPane } from "./components/HistoryPane";
 import { Airline } from "./components/Airline";
@@ -10,30 +10,60 @@ interface AppProps {
   prompt?: string;
 }
 
-// runs the direct flow against the prior conversation (ctx.history) plus the
-// newly submitted input, streaming text into uiState.history (one entry per
-// turn, appended to in place as deltas arrive) and recording the assembled
-// reply in chatState.history so the next turn has it as context.
-async function runDirect(ctx: FlowContext, input: string) {
+// dispatches on chatState.mode to pick a flow. the store initializes mode to
+// "executing" and nothing in the app changes it yet, so only that branch
+// actually runs today - but the mapping itself is real.
+function flowFor(mode: ChatMode) {
+  switch (mode) {
+    case "direct":
+      return direct;
+    case "thinking":
+      return thinking;
+    case "planning":
+      return planning;
+    case "executing":
+      return executing;
+  }
+}
+
+// runs the flow selected for chatState.mode against the prior conversation
+// (ctx.history) plus the newly submitted input. Streams text/thinking into
+// uiState.history (one entry per turn, appended to in place as deltas
+// arrive), surfaces tool calls as their own entries, and records the
+// assembled reply in chatState.history so the next turn has it as context.
+async function run(ctx: FlowContext, input: string) {
+  const chatMode = AppStore.getState().chatState.mode;
+  const flow = flowFor(chatMode);
   let assistantText = "";
   let started = false;
 
   try {
-    for await (const event of direct(ctx).run(input)) {
-      if (event.type !== "text" && event.type !== "thinking") continue;
-
+    for await (const event of flow(ctx).run(input)) {
       const uiState = AppStore.getState().uiState;
-      if (started) {
-        uiState.appendToLastEntry(event.text);
-      } else {
-        started = true;
-        uiState.appendHistory(event.text);
+
+      switch (event.type) {
+        case "text":
+        case "thinking":
+          if (started) {
+            uiState.appendToLastEntry(event.text);
+          } else {
+            started = true;
+            uiState.appendHistory(event.text);
+          }
+          if (event.type === "text") assistantText += event.text;
+          break;
+        case "tool-call":
+          uiState.appendHistory(`Called tool: ${event.name}`);
+          started = false;
+          break;
+        case "tool-result":
+        case "done":
+          break;
       }
-      if (event.type === "text") assistantText += event.text;
     }
   } catch (err) {
     // XXX surface this once error rendering (TODO) lands
-    log.error(err, "direct flow failed");
+    log.error(err, "executing flow failed");
     return;
   }
 
@@ -56,7 +86,7 @@ const Screen = () => {
     const ctx: FlowContext = { history: chatState.history };
     chatState.appendHistory({ role: "user", content: value });
 
-    void runDirect(ctx, value);
+    void run(ctx, value);
   };
 
   // outer box: border (1+1) + padding (2+2)

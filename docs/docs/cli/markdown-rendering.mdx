@@ -1,0 +1,150 @@
+---
+slug: markdown-rendering
+title: Markdown rendering in the chat history
+sidebar_label: Markdown rendering
+---
+
+# Markdown rendering in the chat history
+
+The chat history pane renders each entry as **Markdown** rather than plain
+text, so assistant replies show real headings, lists, emphasis, links, tables,
+and fenced code blocks instead of raw `#`, `*`, and backtick characters.
+
+## What changed
+
+Two files in the `cli` workspace:
+
+- **`cli/src/components/HistoryPane.tsx`** — each history entry is now rendered
+  with OpenTUI's native `<markdown>` element instead of `<text>`.
+- **`cli/src/components/markdownStyle.ts`** (new) — a `createMarkdownStyle()`
+  factory that returns the `SyntaxStyle` the markdown renderer needs.
+
+### Before
+
+```tsx
+{history.map((entry, i) => (
+  <text key={i}>{entry}</text>
+))}
+```
+
+### After
+
+```tsx
+{history.map((entry, i) => (
+  <markdown key={i} content={entry} syntaxStyle={syntaxStyle} width="100%" />
+))}
+```
+
+## Why the native component
+
+OpenTUI ships a first-class `MarkdownRenderable` in `@opentui/core` (exposed as
+the `<markdown>` JSX element by `@opentui/react`). It is built on `marked` plus
+bundled tree-sitter grammars (`@opentui/core/assets/markdown*/`), so it handles
+block layout — tables, blockquotes, list markers, fenced code — rather than only
+colorizing source text.
+
+The alternatives were weaker:
+
+- **`<code filetype="markdown">`** highlights Markdown *as source*. It colorizes
+  but never lays out tables or lists as rendered blocks — you would still see the
+  raw syntax.
+- **Hand-parsing with `marked` and emitting `<text>`/`<box>`** duplicates work the
+  native component already does, including its `renderNode` escape hatch for
+  custom tokens.
+
+Since we already depend on `@opentui/core` and `@opentui/react`, the native
+component was the least code for the most correct output.
+
+## Design decisions
+
+### `syntaxStyle` is required, and there is no bundled default
+
+The markdown component takes a **mandatory** `syntaxStyle` — a map from
+tree-sitter capture scopes to colors/attributes. There is no zero-config theme,
+so `markdownStyle.ts` defines one with `SyntaxStyle.fromStyles({ ... })`.
+
+The keys are the *actual* scopes emitted by OpenTUI's bundled grammars (read out
+of `assets/markdown/highlights.scm` and `assets/markdown_inline/highlights.scm`)
+— `markup.heading.1`…`markup.heading.6`, `markup.list`, `markup.quote`,
+`markup.raw`, `markup.strong`, `markup.italic`, `markup.link.url`, and so on —
+with a `default` fallback for anything unlisted. The palette is
+GitHub-dark-flavored and is meant to be tweaked once a project theme is settled.
+
+### The style is built inside the component, not at module load
+
+`SyntaxStyle.fromStyles()` calls `resolveRenderLib()` under the hood, which
+reaches for the native render library. That library only exists **after**
+`createCliRenderer()` boots. Building the style at module load would run before
+the renderer is initialized and fail.
+
+So the style is created inside `HistoryPane` via `useMemo` (once per mount, when
+React is already rendering into a live renderer) and released on unmount, because
+it holds a native handle:
+
+```tsx
+const syntaxStyle = useMemo(() => createMarkdownStyle(), []);
+useEffect(() => () => syntaxStyle.destroy(), [syntaxStyle]);
+```
+
+### The history scrollbox needs a definite height, not a content-derived one
+
+The `<markdown>` entries live inside the history `<scrollbox>`. That scrollbox
+**fills its flex slot** (`flexGrow={1}`, plus `minHeight={0}` so it can shrink and
+scroll) rather than sizing itself from its measured content.
+
+This is load-bearing. OpenTUI's scrollbox clamps nested content to the viewport
+height *while measuring* it — a `MarkdownRenderable` wraps its paragraphs in an
+inner `CodeRenderable`, and when the viewport is shorter than that content, the
+whole entry collapses onto a single clipped line (height 1). An earlier version
+sized the scrollbox from a content-height feedback loop that started at ~2 rows,
+so every entry measured as one line, overlapped its neighbours, and the loop
+could never grow (measuring needs a viewport already ≥ content — a chicken-and-egg).
+
+Giving the scrollbox a definite height from the layout keeps the viewport tall
+enough for the markdown to wrap and report its true height. This matches
+OpenTUI's own `markdown-demo` reference, which puts the markdown in a
+`flexGrow` scrollbox and never derives height from content. `stickyScroll` with
+`stickyStart="bottom"` then pins the view to the newest output as it streams in.
+
+**Do not** reintroduce a `height`/`onContentSizeChange` "shrink to fit the
+content" scheme here — it fights the measurement and brings the overlap back,
+worst of all during streaming, where each appended chunk re-collapses the entry.
+
+### Thinking entries render muted and italic
+
+History entries carry a `kind` (`"text"` or `"thinking"` — see `HistoryEntry` in
+the store). The run loop opens a **separate** entry when the stream switches
+between reasoning and reply, so the two never share a block. `HistoryPane` then
+picks the `syntaxStyle` per entry: `"thinking"` uses `createThinkingStyle()`,
+which defines only `default` (`{ fg: "#8b949e", italic: true }`) so every scope
+falls back to muted italic and the model's reasoning reads as visibly distinct
+from its answer.
+
+### Non-Markdown entries render fine
+
+History also holds plain user echoes and lines like `Called tool: read`. Plain
+text is valid Markdown and renders unchanged, so no special-casing was needed.
+
+## Known trade-offs / follow-ups
+
+- **Streaming.** The `streaming` prop is currently left off. The run loop appends
+  deltas in place to the last entry, so the trailing block re-parses on every
+  delta. OpenTUI's `streaming` prop exists for exactly this — it keeps the
+  trailing block unstable until you flip it to `false` on `done`, avoiding
+  reflow. Wiring it up means threading an "is this entry still streaming" flag
+  from the run loop into `HistoryPane`.
+- **Version pinning.** OpenTUI's markdown path has seen regressions across minor
+  releases in other projects. Bump `@opentui/*` deliberately and eyeball the
+  history pane after upgrading.
+- **Theme.** The colors are a placeholder palette; swap them when the CLI settles
+  on a design language.
+
+## References
+
+- OpenTUI markdown component: https://opentui.com/docs/components/markdown/
+- Local type defs: `node_modules/@opentui/core/renderables/Markdown.d.ts`
+- Scope names: `@opentui/core/assets/markdown*/highlights.scm`
+
+---
+
+*Written by Claude (Claude Code), 2026-07-23.*

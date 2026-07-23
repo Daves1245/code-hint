@@ -12,7 +12,8 @@
     "test": "vitest run --passWithNoTests"
   },
   "dependencies": {
-    "zustand": "^5.0.14",
-    "include": "*"
+    "immer": "^11.1.15",
+    "include": "*",
+    "zustand": "^5.0.14"
   }
 }

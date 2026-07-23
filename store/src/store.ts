@@ -1,7 +1,8 @@
 import { create } from "zustand";
+import { immer } from "zustand/middleware/immer";
 import type { AppState, ChatMode, ChatState, Loadable, Message } from "./types";
 
-export const AppStore = create<AppState>()((set) => ({
+export const AppStore = create<AppState>()(immer((set) => ({
   authState: { status: "idle" },
   chatState: {
     prompt: "",
@@ -27,6 +28,9 @@ export const AppStore = create<AppState>()((set) => ({
       set((state: AppState) => ({
         chatState: { ...state.chatState, mode },
       })),
+  },
+  flowContext: {
+    history: [],
   },
   uiState: {
     history: [],
@@ -92,4 +96,8 @@ export const AppStore = create<AppState>()((set) => ({
       },
     })),
   setChatState: (chatState: ChatState) => set({ chatState }),
-}));
+  setChatMode: (mode: ChatMode) =>
+    set((state: AppState) => {
+      state.chatState.mode = mode;
+    }),
+})));

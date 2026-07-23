@@ -5,7 +5,7 @@ import { loadCredentials } from "include/src/credentials";
 import type {
   Message,
   MessageContentBlock,
-  LLMEvent,
+  FlowEvent,
   LLMStream,
   StreamOptions,
   ToolDefinition,
@@ -104,10 +104,10 @@ function toAnthropicTool(tool: ToolDefinition): Anthropic.Tool {
 }
 
 // bridges the SDK's EventEmitter-style MessageStream onto a plain async
-// iterable of generic LLMEvents, so callers never see Anthropic's wire
-// format (content-block indices, JSON deltas, snapshots).
-function toEvents(raw: MessageStream): AsyncIterable<LLMEvent> {
-  type Queued = { event: LLMEvent } | { done: true } | { error: unknown };
+// iterable of FlowEvents, so callers never see Anthropic's wire format
+// (content-block indices, JSON deltas, snapshots).
+function toEvents(raw: MessageStream): AsyncIterable<FlowEvent> {
+  type Queued = { event: FlowEvent } | { done: true } | { error: unknown };
   const queue: Queued[] = []; // events received but not consumed yet
   let wake: (() => void) | null = null; // wakes the generator once an item is queued
 
@@ -117,9 +117,9 @@ function toEvents(raw: MessageStream): AsyncIterable<LLMEvent> {
     wake = null;
   };
 
-  const onText = (delta: string) => push({ event: { type: "text", delta } });
+  const onText = (delta: string) => push({ event: { type: "text", text: delta } });
   const onThinking = (delta: string) =>
-    push({ event: { type: "thinking", delta } });
+    push({ event: { type: "thinking", text: delta } });
   const onContentBlock = (block: Anthropic.ContentBlock) => {
     if (block.type === "tool_use") {
       push({

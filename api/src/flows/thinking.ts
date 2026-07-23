@@ -13,13 +13,16 @@ export function thinking(ctx: FlowContext): Flow {
       for await (const event of llmStream.events) {
         switch (event.type) {
           case "text":
-            yield { type: "text", text: event.delta };
+            yield { type: "text", text: event.text };
             break;
           case "thinking":
-            yield { type: "thinking", text: event.delta };
+            yield { type: "thinking", text: event.text };
             break;
           case "tool-call":
             // thinking requests no tools, so the provider shouldn't emit these
+            break;
+          case "tool-result":
+          case "done":
             break;
         }
       }

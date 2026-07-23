@@ -1,38 +1,39 @@
-import { readFile, readFileSync } from "fs";
-import { type ToolDefinition, type FlowEvent } from "store/src/types";
+import { readFileSync } from "fs";
+import { type ToolDefinition, type ReadToolResult } from "store/src/types";
 
-const read_tool: ToolDefinition = {
+export const read_tool: ToolDefinition = {
     name: "read",
     description: "Given a filepath, return the contents of the file pointed to by that path",
     inputSchema: {
         type: "object",
         properties: {
-            "path": "Path of the file to read",
-            required: "path"
-        }
+            path: {
+                type: "string",
+                description: "Path of the file to read",
+            },
+        },
+        required: ["path"],
     }
 };
 
-export function read(path: string): FlowEvent {
-    let contents;
+export function read(path: string): ReadToolResult {
     try {
-        contents = readFileSync(path);
+        const contents = readFileSync(path, "utf-8");
+        return { tool: "read", ok: true, contents };
     } catch (error: unknown) {
+        const nodeError = error as NodeJS.ErrnoException;
         const errMsg = ((): string => {
-            const nodeError = error as NodeJS.ErrnoException;
             switch (nodeError.code) {
                 case 'ENOENT':
                     return "No such file or directory";
-                case 'EACCESS':
+                case 'EACCES':
                     return "You do not have permission to view this file";
                 case 'EISDIR':
                     return "Is a directory";
                 default:
                     return "Unknown error";
-                    break;
             }
         })();
-        return {type: "tool-result", result: { errMsg }, isError: true };
+        return { tool: "read", ok: false, errMsg };
     }
-    return {type: "tool-result", result: { "contents": contents }}
 }

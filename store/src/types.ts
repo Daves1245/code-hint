@@ -17,9 +17,11 @@ export function getTaskId<T>(loadable?: Loadable<T> | null): string | null {
 export interface AppState {
   authState: Loadable<null>;
   chatState: ChatState;
+  flowContext: FlowContext;
   uiState: UIState;
   setAuthState: (state: Loadable<null>) => void;
   setChatState: (state: ChatState) => void;
+  setChatMode: (mode: ChatMode) => void;
 }
 
 export interface ChatState {
@@ -94,17 +96,15 @@ export interface FlowContext {
   history: Message[];
 }
 
+// the one event shape used everywhere a stream is consumed: providers emit
+// these directly, and flows forward/filter them rather than translating
+// between a provider-level event type and a flow-level one.
 export type FlowEvent =
   | { type: "text"; text: string }
   | { type: "thinking"; text: string }
-  | { type: "tool-call"; text: string }
-  | { type: "tool-result"; result: object; isError?: boolean }
+  | { type: "tool-call"; id: string; name: string; input: unknown }
+  | { type: "tool-result"; result: ToolResult }
   | { type: "done" };
-
-export type LLMEvent =
-  | { type: "text"; delta: string }
-  | { type: "thinking"; delta: string }
-  | { type: "tool-call"; id: string; name: string; input: unknown };
 
 // a provider's live response to a stream() call: incremental deltas as they
 // arrive, plus the fully assembled assistant Message once the response
@@ -112,19 +112,39 @@ export type LLMEvent =
 // content for tool call blocks to decide whether to loop (use executor)
 // this is nearly a direct copy of anthropic's stream() interface
 export interface LLMStream {
-  events: AsyncIterable<LLMEvent>;
+  events: AsyncIterable<FlowEvent>;
   finalMessage(): Promise<Message>;
 }
+
+// a JSON Schema subset covering what tool input schemas actually need:
+// primitive/object/array types, nested properties, and enum constraints.
+export type JSONSchema =
+  | { type: "string" | "number" | "integer" | "boolean" | "null"; description?: string; enum?: (string | number | boolean | null)[] }
+  | { type: "array"; description?: string; items: JSONSchema }
+  | {
+      type: "object";
+      description?: string;
+      properties: Record<string, JSONSchema>;
+      required?: string[];
+    };
 
 export interface ToolDefinition {
   name: string;
   description: string;
   inputSchema: {
     type: "object";
-    properties: Record<string, unknown>;
+    properties: Record<string, JSONSchema>;
     required?: string[];
   };
 }
+
+// each tool has its own success/failure shape, discriminated by `tool`;
+// union in more tools' results here as they get implemented.
+export type ReadToolResult =
+  | { tool: "read"; ok: true; contents: string }
+  | { tool: "read"; ok: false; errMsg: string };
+
+export type ToolResult = ReadToolResult;
 
 export interface StreamOptions {
   thinking?: boolean;

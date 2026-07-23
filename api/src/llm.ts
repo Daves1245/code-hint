@@ -1,6 +1,5 @@
 import type {
   Message,
-  LLMEvent,
   ToolDefinition,
   StreamOptions,
   LLMStream,

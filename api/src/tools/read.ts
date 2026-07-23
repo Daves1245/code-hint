@@ -1,4 +1,4 @@
-import { readFileSync } from "fs";
+import { readFile } from "fs/promises";
 import { type ToolDefinition, type ReadToolResult } from "store/src/types";
 
 export const read_tool: ToolDefinition = {
@@ -17,9 +17,9 @@ export const read_tool: ToolDefinition = {
   },
 };
 
-export function read(path: string): ReadToolResult {
+export async function read(path: string): Promise<ReadToolResult> {
   try {
-    const contents = readFileSync(path, "utf-8");
+    const contents = await readFile(path, "utf-8");
     return { tool: "read", ok: true, contents };
   } catch (error: unknown) {
     const nodeError = error as NodeJS.ErrnoException;

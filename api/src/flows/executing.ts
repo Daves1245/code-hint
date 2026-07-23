@@ -4,12 +4,13 @@ import type {
   FlowContext,
   FlowEvent,
   Message,
+  ToolDefinition,
   ToolResult,
 } from "store/src/types";
 import * as llm from "../llm";
 import { read_tool, read } from "../tools/read";
 
-function runTool(name: string, input: unknown): ToolResult {
+async function runTool(name: string, input: unknown): Promise<ToolResult> {
   switch (name) {
     case "read": {
       const path = (input as { path?: unknown } | null)?.path;
@@ -78,6 +79,21 @@ export function executing(ctx: FlowContext): Flow {
         history = [...history, await llmStream.finalMessage()];
 
         if (toolCalls.length === 0) break;
+
+        // perform all reads in parallel
+        // should be fine assuming an llm doesn't intend to
+        // write, then immediately read within the same turn/message block?
+        const readables = toolCalls.filter((toolCall: ToolDefinition) => {
+          // for now, we only have the read tool
+          return toolCall.name == read_tool.name;
+        });
+
+        await Promise.all(
+          readables.map((call) => ({
+            call,
+            result: runTool(call.name, call.input),
+          })),
+        );
 
         const outcomes = toolCalls.map((call) => ({
           call,

@@ -1,6 +1,14 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
-import type { AppState, ChatMode, ChatState, Loadable, Message } from "./types";
+import type {
+  AppState,
+  ChatMode,
+  ChatState,
+  HistoryEntry,
+  HistoryEntryKind,
+  Loadable,
+  Message,
+} from "./types";
 
 export const AppStore = create<AppState>()(
   immer((set) => ({
@@ -34,25 +42,27 @@ export const AppStore = create<AppState>()(
     },
     uiState: {
       history: [],
-      setHistory: (history: string[]) =>
+      setHistory: (history: HistoryEntry[]) =>
         set((state: AppState) => ({
           uiState: { ...state.uiState, history },
         })),
-      appendHistory: (entry: string) =>
+      appendHistory: (content: string, kind: HistoryEntryKind = "text") =>
         set((state: AppState) => ({
           uiState: {
             ...state.uiState,
-            history: [...state.uiState.history, entry],
+            history: [...state.uiState.history, { kind, content }],
           },
         })),
       appendToLastEntry: (delta: string) =>
         set((state: AppState) => {
           const history = state.uiState.history;
-          const last = history[history.length - 1] ?? "";
+          const last = history[history.length - 1];
+          if (!last) return { uiState: state.uiState };
+          const updated = { ...last, content: last.content + delta };
           return {
             uiState: {
               ...state.uiState,
-              history: [...history.slice(0, -1), last + delta],
+              history: [...history.slice(0, -1), updated],
             },
           };
         }),
@@ -71,12 +81,6 @@ export const AppStore = create<AppState>()(
       setInputHeight: (inputHeight: number) =>
         set((state: AppState) => ({
           uiState: { ...state.uiState, inputHeight },
-        })),
-      // padding(2) of the scrollbox content wrapper, no entries yet
-      historyContentHeight: 2,
-      setHistoryContentHeight: (historyContentHeight: number) =>
-        set((state: AppState) => ({
-          uiState: { ...state.uiState, historyContentHeight },
         })),
       focusedId: "input",
       setFocusedId: (focusedId: string | null) =>

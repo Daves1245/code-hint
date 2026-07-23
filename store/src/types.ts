@@ -37,10 +37,20 @@ export interface ChatState {
 
 export interface Settings {}
 
+// distinguishes how a history entry is rendered: "thinking" shows the model's
+// reasoning muted+italic, everything else renders as normal text.
+export type HistoryEntryKind = "text" | "thinking";
+
+export interface HistoryEntry {
+  kind: HistoryEntryKind;
+  content: string;
+}
+
 export interface UIState {
-  history: string[];
-  setHistory: (history: string[]) => void;
-  appendHistory: (entry: string) => void;
+  history: HistoryEntry[];
+  setHistory: (history: HistoryEntry[]) => void;
+  // starts a new entry; kind defaults to "text"
+  appendHistory: (content: string, kind?: HistoryEntryKind) => void;
   // appends a delta onto the last entry in place, for rendering streamed text
   appendToLastEntry: (delta: string) => void;
   status: { type: "error"; errmsg: string } | { type: "ok" };
@@ -54,8 +64,6 @@ export interface UIState {
   }) => void;
   inputHeight: number;
   setInputHeight: (inputHeight: number) => void;
-  historyContentHeight: number;
-  setHistoryContentHeight: (historyContentHeight: number) => void;
   focusedId: string | null;
   setFocusedId: (focusedId: string | null) => void;
 }

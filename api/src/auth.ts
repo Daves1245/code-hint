@@ -1,5 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { loadCredentials } from "include/src/credentials";
+import { sdkLogger } from "./sdkLogger";
 
 // Confirms the configured credentials are actually usable before the app
 // starts serving requests, rather than failing on the first real request.
@@ -21,6 +22,6 @@ export async function verifyCredentials(): Promise<void> {
 // Resolving the model requires a valid, authorized API key, so this alone
 // verifies credentials without the cost/latency of an actual completion.
 async function verifyAnthropicCredentials(apiKey: string, model: string) {
-  const client = new Anthropic({ apiKey });
+  const client = new Anthropic({ apiKey, logger: sdkLogger });
   await client.models.retrieve(model);
 }

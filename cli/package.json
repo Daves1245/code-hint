@@ -9,6 +9,7 @@
   "scripts": {
     "build": "tsc -b",
     "dev": "bun src/index.tsx",
+    "debug": "ANTHROPIC_LOG=debug SHOW_CONSOLE=1 bun src/index.tsx",
     "test": "bun --bun vitest run --passWithNoTests",
     "test:watch": "bun --bun vitest"
   },

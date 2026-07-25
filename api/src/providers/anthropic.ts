@@ -2,6 +2,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import type { AnthropicError } from "@anthropic-ai/sdk";
 import type { MessageStream } from "@anthropic-ai/sdk/lib/MessageStream";
 import { loadCredentials } from "include/src/credentials";
+import { sdkLogger } from "../sdkLogger";
 import type {
   Message,
   MessageContentBlock,
@@ -15,6 +16,7 @@ const credentials = loadCredentials();
 
 const client = new Anthropic({
   apiKey: credentials.provider.llm_api_key,
+  logger: sdkLogger,
 });
 
 export function init() {

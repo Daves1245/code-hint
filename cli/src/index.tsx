@@ -19,14 +19,19 @@ const renderer = await createCliRenderer({
 
 // mirrors the console's own width math so the panes meet without a gap
 const appWidth = (width: number) =>
-  showConsole ? width - Math.max(1, Math.floor((width * consolePercent) / 100)) : width;
+  showConsole
+    ? width - Math.max(1, Math.floor((width * consolePercent) / 100))
+    : width;
 
 AppStore.getState().uiState.setScreenDimensions({
   width: appWidth(renderer.width),
   height: renderer.height,
 });
 renderer.on("resize", (width: number, height: number) => {
-  AppStore.getState().uiState.setScreenDimensions({ width: appWidth(width), height });
+  AppStore.getState().uiState.setScreenDimensions({
+    width: appWidth(width),
+    height,
+  });
 });
 
 export default async function main() {

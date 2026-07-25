@@ -26,17 +26,16 @@ function flowFor(mode: ChatMode) {
   }
 }
 
-// runs the flow selected for chatState.mode against the prior conversation
-// (ctx.history) plus the newly submitted input. Streams into uiState.history as
-// entries appended to in place as deltas arrive - text and thinking become
-// separate entries (they render differently) and tool calls their own entry -
-// and records the assembled reply in chatState.history so the next turn has it
-// as context.
+// runs the flow selected for chatState.mode. The conversation lives in
+// chatState.history: handleSubmit appends the user's message before calling
+// this, and the flow itself records assistant turns and tool results there.
+// Streams into uiState.history as entries appended to in place as deltas
+// arrive - text and thinking become separate entries (they render differently)
+// and tool calls their own entry.
 async function run(ctx: FlowContext, input: string) {
-  AppStore.getState().chatState.setMode("thinking");
+  AppStore.getState().chatState.setMode("executing");
   const chatMode = AppStore.getState().chatState.mode;
   const flow = flowFor(chatMode);
-  let assistantText = "";
   // the kind of the entry currently being streamed into, or null when the next
   // delta should open a fresh entry. Tracking it splits text and thinking into
   // separate entries (they render differently) and starts a new entry after a
@@ -56,7 +55,6 @@ async function run(ctx: FlowContext, input: string) {
             openKind = event.type;
             uiState.appendHistory(event.text, event.type);
           }
-          if (event.type === "text") assistantText += event.text;
           break;
         case "tool-call":
           uiState.appendHistory(`Called tool: ${event.name}`);
@@ -70,14 +68,6 @@ async function run(ctx: FlowContext, input: string) {
   } catch (err) {
     // XXX surface this once error rendering (TODO) lands
     log.error(err, "executing flow failed");
-    return;
-  }
-
-  if (assistantText) {
-    AppStore.getState().chatState.appendHistory({
-      role: "assistant",
-      content: assistantText,
-    });
   }
 }
 
@@ -88,7 +78,6 @@ const Screen = () => {
   const handleSubmit = (value: string) => {
     uiState.appendHistory(value);
     chatState.setPrompt(value);
-    chatState.setMode("thinking");
 
     const ctx: FlowContext = { history: chatState.history };
     chatState.appendHistory({ role: "user", content: value });

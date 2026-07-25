@@ -139,6 +139,19 @@ export type JSONSchema =
       required?: string[];
     };
 
+// one piece of data a tool call touches: a canonicalized absolute path and
+// how it's accessed. paths must be canonicalized before comparison - string
+// identity is data identity only after resolving rel/abs and case-folding.
+export interface Access {
+  path: string;
+  mode: "read" | "write";
+}
+
+// everything a tool call may touch, known before it runs. calls whose
+// footprint can't be determined up front get the pessimistic root scope
+// [{ path: "/", mode: "write" }], which conflicts with everything.
+export type Scope = Access[];
+
 export interface ToolDefinition {
   name: string;
   description: string;

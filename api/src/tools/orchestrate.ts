@@ -100,8 +100,11 @@ export function toolResultContent(result: ToolResult): {
 export async function runToolCalls(
   toolCalls: ToolCall[],
 ): Promise<{ call: ToolCall; result: ToolResult }[]> {
-  const scheduled: { call: ToolCall; scope: Scope; promise: Promise<ToolResult> }[] =
-    [];
+  const scheduled: {
+    call: ToolCall;
+    scope: Scope;
+    promise: Promise<ToolResult>;
+  }[] = [];
 
   for (const call of toolCalls) {
     const scope = scopeOf(call);

@@ -37,7 +37,7 @@ describe("App", () => {
 
     expect(captureCharFrame()).toContain("what does this code do?");
     expect(AppStore.getState().uiState.history).toEqual([
-      "what does this code do?",
+      { kind: "text", content: "what does this code do?" },
     ]);
 
     await interact(() => renderer.destroy());

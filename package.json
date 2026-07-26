@@ -39,6 +39,7 @@
     "vitest": "^4.1.9"
   },
   "dependencies": {
+    "@qdrant/js-client-rest": "^1.18.0",
     "pino": "^10.3.1"
   }
 }

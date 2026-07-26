@@ -24,6 +24,9 @@ const credentialsSchema = z.object({
       level: z.string().default("info"),
     })
     .default({ level: "info" }),
+  qdrant: z.object({
+    url: z.string().url(),
+  }),
 });
 
 export type Credentials = z.infer<typeof credentialsSchema>;

@@ -26,6 +26,13 @@ const credentialsSchema = z.object({
     .default({ level: "info" }),
   qdrant: z.object({
     url: z.string().url(),
+    // chars per chunk for the code/logic chunkers; tune once real content
+    // sizes are in
+    chunk_size: z.number().int().positive().default(2000),
+    // chars shared between consecutive chunks, so a span that would land on
+    // a boundary keeps some surrounding context on both sides. must be <
+    // chunk_size
+    chunk_overlap: z.number().int().nonnegative().default(200),
   }),
 });
 

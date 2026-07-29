@@ -174,3 +174,85 @@ export interface StreamOptions {
   thinking?: boolean;
   tools?: ToolDefinition[];
 }
+
+/*
+ *
+ * Memory:
+ *
+ * we'd like to keep a few layers of visibility into the stack by granularity.
+ * high level / abstract to implementation-specific details, this way only
+ * providing what's relevant at each step. a common point is that
+ * we only really want to chunk by explainability of code. i.e, a complicated
+ * regex would be its own chunk with a summary explaining what it does (wouldn't
+ * show up in the embedding - i think?). also another note: embeddings
+ * don't properly encode 'intensity' of a topic into different spaces: two chunks
+ * that have the same *substance*, regardless of the extreme it goes to, will
+ * show up close to each other in the embedding space. this is what makes negated
+ * queries hard to answer. "chunks where NOT X" need to be handled smartly. this
+ * is what zeroentropy does - but how the hell? well they also do multi-hop queres,
+ * among many other things, but these two will be sufficient focus points.
+ */
+
+export interface CodeChunk {
+    project: string;
+    path: string;
+    start: number; // number of characters deep
+    end: number;
+    contentHash: string;
+    content: string;
+}
+
+export interface Summary {
+    project: string;
+    paths: string[];
+    level: "high" | "medium" | "low";
+    summary: string;
+}
+
+export interface Memory {
+    project: string;
+    content: string;
+}
+
+export interface IndexMetadata {
+    indexedAt: string;
+    model: string;
+    attributes?: Record<string, string>;
+}
+
+// like CodeChunk, but boundaries come from treesitter instead of an
+// arbitrary span - kind is whatever node type treesitter assigns the chunk
+// (function, class, module, ...). generic for now; fields will grow once
+// treesitter is actually wired in.
+export interface LogicChunk {
+    project: string;
+    path: string;
+    start: number;
+    end: number;
+    contentHash: string;
+    content: string;
+    kind: string;
+}
+
+export interface SearchResult<T> {
+  id: string;
+  score: number;
+  payload: T;
+}
+
+export type CodePayload = CodeChunk & IndexMetadata;
+export type SummaryPayload = Summary& IndexMetadata;
+export type MemoryPayload = Memory & IndexMetadata;
+export type LogicPayload = LogicChunk & IndexMetadata;
+
+// easier to work with a sentinal value / memory-specific project
+// than to provide a null value
+export const MEMORIES_SENTINEL = "__memories__";
+
+// placeholder for interfacing with zeroentropy local model (we'll include others
+// later))
+export interface Embedder {
+  model: string;
+  dimensions: number;
+  embed(texts: string[]): Promise<number[][]>;
+}

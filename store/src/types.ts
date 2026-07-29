@@ -194,30 +194,30 @@ export interface StreamOptions {
  */
 
 export interface CodeChunk {
-    project: string;
-    path: string;
-    start: number; // number of characters deep
-    end: number;
-    contentHash: string;
-    content: string;
+  project: string;
+  path: string;
+  start: number; // number of characters deep
+  end: number;
+  contentHash: string;
+  content: string;
 }
 
 export interface Summary {
-    project: string;
-    paths: string[];
-    level: "high" | "medium" | "low";
-    summary: string;
+  project: string;
+  paths: string[];
+  level: "high" | "medium" | "low";
+  summary: string;
 }
 
 export interface Memory {
-    project: string;
-    content: string;
+  project: string;
+  content: string;
 }
 
 export interface IndexMetadata {
-    indexedAt: string;
-    model: string;
-    attributes?: Record<string, string>;
+  indexedAt: string;
+  model: string;
+  attributes?: Record<string, string>;
 }
 
 // like CodeChunk, but boundaries come from treesitter instead of an
@@ -225,13 +225,13 @@ export interface IndexMetadata {
 // (function, class, module, ...). generic for now; fields will grow once
 // treesitter is actually wired in.
 export interface LogicChunk {
-    project: string;
-    path: string;
-    start: number;
-    end: number;
-    contentHash: string;
-    content: string;
-    kind: string;
+  project: string;
+  path: string;
+  start: number;
+  end: number;
+  contentHash: string;
+  content: string;
+  kind: string;
 }
 
 export interface SearchResult<T> {
@@ -241,7 +241,7 @@ export interface SearchResult<T> {
 }
 
 export type CodePayload = CodeChunk & IndexMetadata;
-export type SummaryPayload = Summary& IndexMetadata;
+export type SummaryPayload = Summary & IndexMetadata;
 export type MemoryPayload = Memory & IndexMetadata;
 export type LogicPayload = LogicChunk & IndexMetadata;
 

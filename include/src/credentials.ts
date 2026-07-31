@@ -34,6 +34,10 @@ const credentialsSchema = z.object({
     // chunk_size
     chunk_overlap: z.number().int().nonnegative().default(200),
   }),
+  s3: z.object({
+    bucket: z.string(),
+    region: z.string(),
+  }),
 });
 
 export type Credentials = z.infer<typeof credentialsSchema>;

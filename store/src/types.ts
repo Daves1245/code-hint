@@ -256,3 +256,13 @@ export interface Embedder {
   dimensions: number;
   embed(texts: string[]): Promise<number[][]>;
 }
+
+export interface Memory {
+    name: string;
+    content: string;
+}
+
+export interface FetchMemoriesResponse {
+    status: number;
+    data: string | null;
+}

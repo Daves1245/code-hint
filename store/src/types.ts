@@ -209,6 +209,9 @@ export interface Summary {
   summary: string;
 }
 
+// According to claude code docs, memories are
+// stored in ~/.claude/projects/<project>/memory/MEMORY.md
+// we follow this layout
 export interface Memory {
   project: string;
   content: string;
@@ -257,12 +260,7 @@ export interface Embedder {
   embed(texts: string[]): Promise<number[][]>;
 }
 
-export interface Memory {
-    name: string;
-    content: string;
-}
-
 export interface FetchMemoriesResponse {
     status: number;
-    data: string | null;
+    memory: Memory
 }

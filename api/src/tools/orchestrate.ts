@@ -87,12 +87,17 @@ async function runTool(name: string, input: unknown): Promise<ToolResult> {
         return {
           tool: "search_memories",
           ok: false,
-          errMsg: "the 'search_memories' tool requires a string 'project' argument",
+          errMsg:
+            "the 'search_memories' tool requires a string 'project' argument",
         };
       }
       const response = await search_memories(project);
       return response.status === "ok"
-        ? { tool: "search_memories", ok: true, memories: response.data.memories }
+        ? {
+            tool: "search_memories",
+            ok: true,
+            memories: response.data.memories,
+          }
         : { tool: "search_memories", ok: false, errMsg: response.errmsg };
     }
     case upload_memory_tool.name: {

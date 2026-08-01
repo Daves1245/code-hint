@@ -177,9 +177,7 @@ export type UploadMemoryToolResult =
   | { tool: "upload_memory"; ok: false; errMsg: string };
 
 export type ToolResult =
-  | ReadToolResult
-  | SearchMemoriesToolResult
-  | UploadMemoryToolResult;
+  ReadToolResult | SearchMemoriesToolResult | UploadMemoryToolResult;
 
 export interface StreamOptions {
   thinking?: boolean;

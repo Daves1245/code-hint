@@ -102,7 +102,9 @@ export class MemoriesSingleton {
       const { Contents = [] } = await this.client.send(
         new ListObjectsV2Command({
           Bucket: this.bucket,
-          Prefix: project ? `${MEMORIES_SENTINEL}/${project}` : MEMORIES_SENTINEL,
+          Prefix: project
+            ? `${MEMORIES_SENTINEL}/${project}`
+            : MEMORIES_SENTINEL,
         }),
       );
 

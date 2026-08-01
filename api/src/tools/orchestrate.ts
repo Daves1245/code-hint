@@ -9,6 +9,12 @@
 import { resolve } from "path";
 import type { Scope, ToolResult } from "store/src/types";
 import { read_tool, read } from "./read";
+import {
+  search_memories_tool,
+  search_memories,
+  upload_memory_tool,
+  upload_memory,
+} from "./remember";
 
 export interface ToolCall {
   id: string;
@@ -64,7 +70,7 @@ function scopeOf(call: ToolCall): Scope {
 
 async function runTool(name: string, input: unknown): Promise<ToolResult> {
   switch (name) {
-    case "read": {
+    case read_tool.name: {
       const path = (input as { path?: unknown } | null)?.path;
       if (typeof path !== "string") {
         return {
@@ -74,6 +80,34 @@ async function runTool(name: string, input: unknown): Promise<ToolResult> {
         };
       }
       return read(path);
+    }
+    case search_memories_tool.name: {
+      const project = (input as { project?: unknown } | null)?.project;
+      if (typeof project !== "string") {
+        return {
+          tool: "search_memories",
+          ok: false,
+          errMsg: "the 'search_memories' tool requires a string 'project' argument",
+        };
+      }
+      const response = await search_memories(project);
+      return response.status === "ok"
+        ? { tool: "search_memories", ok: true, memories: response.data.memories }
+        : { tool: "search_memories", ok: false, errMsg: response.errmsg };
+    }
+    case upload_memory_tool.name: {
+      const prefix = (input as { prefix?: unknown } | null)?.prefix;
+      const content = (input as { content?: unknown } | null)?.content;
+      if (typeof prefix !== "string" || typeof content !== "string") {
+        return {
+          tool: "upload_memory",
+          ok: false,
+          errMsg:
+            "the 'upload_memory' tool requires string 'prefix' and 'content' arguments",
+        };
+      }
+      await upload_memory(prefix, content);
+      return { tool: "upload_memory", ok: true };
     }
     default:
       // shouldn't happen: the provider can only call tools flows register
@@ -91,6 +125,14 @@ export function toolResultContent(result: ToolResult): {
     case "read":
       return result.ok
         ? { content: result.contents, isError: false }
+        : { content: result.errMsg, isError: true };
+    case "search_memories":
+      return result.ok
+        ? { content: JSON.stringify(result.memories), isError: false }
+        : { content: result.errMsg, isError: true };
+    case "upload_memory":
+      return result.ok
+        ? { content: "ok", isError: false }
         : { content: result.errMsg, isError: true };
   }
 }

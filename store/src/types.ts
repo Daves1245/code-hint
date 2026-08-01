@@ -168,7 +168,18 @@ export type ReadToolResult =
   | { tool: "read"; ok: true; contents: string }
   | { tool: "read"; ok: false; errMsg: string };
 
-export type ToolResult = ReadToolResult;
+export type SearchMemoriesToolResult =
+  | { tool: "search_memories"; ok: true; memories: Memory[] }
+  | { tool: "search_memories"; ok: false; errMsg: string };
+
+export type UploadMemoryToolResult =
+  | { tool: "upload_memory"; ok: true }
+  | { tool: "upload_memory"; ok: false; errMsg: string };
+
+export type ToolResult =
+  | ReadToolResult
+  | SearchMemoriesToolResult
+  | UploadMemoryToolResult;
 
 export interface StreamOptions {
   thinking?: boolean;

@@ -261,6 +261,20 @@ export interface Embedder {
 }
 
 export interface FetchMemoriesResponse {
-    status: number;
-    memory: Memory
+  status: number;
+  memory: Memory;
 }
+
+export type MemoryToolResult = {
+  memories: Memory[];
+};
+
+export type ResponseType<T> =
+  | {
+      status: "ok";
+      data: T;
+    }
+  | {
+      status: "error";
+      errmsg: string;
+    };
